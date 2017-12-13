@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Handlers\Drawer.cs" />
     <Compile Include="Handlers\ErrorHandler.cs" />
+    <Compile Include="Handlers\UIHandler.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>

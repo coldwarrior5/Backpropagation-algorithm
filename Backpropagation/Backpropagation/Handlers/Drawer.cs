@@ -20,6 +20,12 @@ namespace Backpropagation.Handlers
 			xPositions.Add(x);
 			yPositions.Add(y);
 		}
+		public void Draw(PictureBox drawingBoard, int x, int y)
+		{
+			((Bitmap)drawingBoard.Image).SetPixel(x, y, Color.Black);
+			
+			drawingBoard.Refresh();
+		}
 
 		public void Draw(PictureBox drawingBoard)
 		{

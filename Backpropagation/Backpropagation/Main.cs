@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Backpropagation.Handlers;
@@ -10,11 +11,13 @@ namespace Backpropagation
 		private bool _mouseDown;
 		private Point _lastLocation;
 		private Drawer _drawer;
+		private List<Panel> _panels;
 
 		public Main()
 		{
 			InitializeComponent();
 			_drawer = new Drawer();
+			_panels = new List<Panel>{panelParam, panelTestSet, panelTrain, panelTest};
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -73,21 +76,31 @@ namespace Backpropagation
 		private void buttonParams_Click(object sender, EventArgs e)
 		{
 			SetSlider(buttonParams.Top, buttonParams.Height);
+			buttonTestSet.Enabled = false;
+			buttonTrain.Enabled = false;
+			buttonTest.Enabled = false;
+			UiHandler.PanelVisible(panelParam, _panels);
 		}
 
 		private void buttonTestSet_Click(object sender, EventArgs e)
 		{
 			SetSlider(buttonTestSet.Top, buttonTestSet.Height);
+			buttonTrain.Enabled = false;
+			buttonTest.Enabled = false;
+			UiHandler.PanelVisible(panelTestSet, _panels);
 		}
 
 		private void buttonTrain_Click(object sender, EventArgs e)
 		{
 			SetSlider(buttonTrain.Top, buttonTrain.Height);
+			buttonTest.Enabled = false;
+			UiHandler.PanelVisible(panelTrain, _panels);
 		}
 
 		private void buttonTest_Click(object sender, EventArgs e)
 		{
 			SetSlider(buttonTest.Top, buttonTest.Height);
+			UiHandler.PanelVisible(panelTest, _panels);
 		}
 
 		private void DrawingBoard_MouseDown(object sender, MouseEventArgs e)
@@ -113,7 +126,40 @@ namespace Backpropagation
 		private void UpdateDrawingBoard(MouseEventArgs e)
 		{
 			_drawer.AddPoint(e.Location.X, e.Location.Y);
-			_drawer.Draw(drawingBoard);
+			_drawer.Draw(drawingBoard, e.Location.X, e.Location.Y);
+		}
+
+		private void SetParameters_Click(object sender, EventArgs e)
+		{
+			UiHandler.PanelVisible(panelTestSet, _panels);
+			buttonTestSet.Enabled = true;
+			SetSlider(buttonTestSet.Top, buttonTestSet.Height);
+		}
+
+		private void SaveTestSet_Click(object sender, EventArgs e)
+		{
+			UiHandler.PanelVisible(panelTrain, _panels);
+			buttonTrain.Enabled = true;
+			SetSlider(buttonTrain.Top, buttonTrain.Height);
+		}
+
+		private void Train_Click(object sender, EventArgs e)
+		{
+			Train.Visible = false;
+			GoToTest.Visible = true;
+		}
+
+		private void GoToTest_Click(object sender, EventArgs e)
+		{
+			UiHandler.PanelVisible(panelTest, _panels);
+			Train.Visible = true;
+			buttonTest.Enabled = true;
+			SetSlider(buttonTest.Top, buttonTest.Height);
+		}
+
+		private void Test_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
