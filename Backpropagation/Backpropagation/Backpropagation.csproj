@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\Drawer.cs" />
     <Compile Include="Handlers\ErrorHandler.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -91,6 +92,8 @@
   <ItemGroup>
     <Content Include="Images\Button.png" />
     <Content Include="Images\ButtonHighlighted.png" />
+    <None Include="Resources\Board.png" />
+    <None Include="Resources\NN.png" />
     <None Include="Resources\ExitHighlighted.png" />
     <None Include="Resources\Exit.png" />
     <None Include="Resources\Button.png" />

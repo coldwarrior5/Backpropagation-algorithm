@@ -63,6 +63,16 @@ namespace Backpropagation.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Board {
+            get {
+                object obj = ResourceManager.GetObject("Board", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Button {
             get {
                 object obj = ResourceManager.GetObject("Button", resourceCulture);
@@ -96,6 +106,16 @@ namespace Backpropagation.Properties {
         internal static System.Drawing.Bitmap ExitHighlighted {
             get {
                 object obj = ResourceManager.GetObject("ExitHighlighted", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NN {
+            get {
+                object obj = ResourceManager.GetObject("NN", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

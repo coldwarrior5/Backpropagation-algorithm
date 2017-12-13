@@ -30,7 +30,6 @@ namespace Backpropagation
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Start));
 			this.buttonStart = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.buttonExit = new System.Windows.Forms.Button();
@@ -98,16 +97,15 @@ namespace Backpropagation
 			this.titleBar.Name = "titleBar";
 			this.titleBar.Size = new System.Drawing.Size(800, 32);
 			this.titleBar.TabIndex = 3;
-			this.titleBar.MouseDown += new MouseEventHandler(this.titlebar_MouseDown);
-			this.titleBar.MouseMove += new MouseEventHandler(this.titlebar_MouseMove);
-			this.titleBar.MouseUp += new MouseEventHandler(this.titlebar_MouseUp);
-
+			this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseDown);
+			this.titleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseMove);
+			this.titleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseUp);
 			// 
 			// Start
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.SystemColors.WindowFrame;
-			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+			this.BackgroundImage = global::Backpropagation.Properties.Resources.NN;
 			this.ClientSize = new System.Drawing.Size(800, 600);
 			this.Controls.Add(this.titleBar);
 			this.Controls.Add(this.label1);
