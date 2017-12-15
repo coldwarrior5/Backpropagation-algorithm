@@ -32,7 +32,10 @@ namespace Backpropagation
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+			this.progressionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.panelIcon = new System.Windows.Forms.Panel();
 			this.buttonParams = new System.Windows.Forms.Button();
 			this.buttonTestSet = new System.Windows.Forms.Button();
@@ -64,32 +67,47 @@ namespace Backpropagation
 			this.separator = new System.Windows.Forms.Label();
 			this.SetParameters = new System.Windows.Forms.Button();
 			this.panelTrain = new System.Windows.Forms.Panel();
-			this.GoToTest = new System.Windows.Forms.Button();
+			this.textBoxLimit = new System.Windows.Forms.TextBox();
+			this.textBoxEta = new System.Windows.Forms.TextBox();
+			this.comboBoxType = new System.Windows.Forms.ComboBox();
+			this.labelLimit = new System.Windows.Forms.Label();
+			this.labelEta = new System.Windows.Forms.Label();
+			this.labelType = new System.Windows.Forms.Label();
+			this.buttonAddLayer = new System.Windows.Forms.Button();
+			this.layoutArchitexture = new System.Windows.Forms.FlowLayoutPanel();
+			this.labelArchitecture = new System.Windows.Forms.Label();
+			this.errorChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.Train = new System.Windows.Forms.Button();
+			this.GoToTest = new System.Windows.Forms.Button();
 			this.panelTest = new System.Windows.Forms.Panel();
+			this.labelClass = new System.Windows.Forms.Label();
+			this.labelClassStatic = new System.Windows.Forms.Label();
+			this.drawingBoardTest = new System.Windows.Forms.PictureBox();
 			this.Test = new System.Windows.Forms.Button();
-			this.flowLayoutPanel1.SuspendLayout();
+			this.progressionPanel.SuspendLayout();
 			this.titleBar.SuspendLayout();
 			this.panelTestSet.SuspendLayout();
 			this.savePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.drawingBoard)).BeginInit();
 			this.panelParam.SuspendLayout();
 			this.panelTrain.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorChart)).BeginInit();
 			this.panelTest.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.drawingBoardTest)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// flowLayoutPanel1
+			// progressionPanel
 			// 
-			this.flowLayoutPanel1.Controls.Add(this.panelIcon);
-			this.flowLayoutPanel1.Controls.Add(this.buttonParams);
-			this.flowLayoutPanel1.Controls.Add(this.buttonTestSet);
-			this.flowLayoutPanel1.Controls.Add(this.buttonTrain);
-			this.flowLayoutPanel1.Controls.Add(this.buttonTest);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Left;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 600);
-			this.flowLayoutPanel1.TabIndex = 2;
+			this.progressionPanel.Controls.Add(this.panelIcon);
+			this.progressionPanel.Controls.Add(this.buttonParams);
+			this.progressionPanel.Controls.Add(this.buttonTestSet);
+			this.progressionPanel.Controls.Add(this.buttonTrain);
+			this.progressionPanel.Controls.Add(this.buttonTest);
+			this.progressionPanel.Dock = System.Windows.Forms.DockStyle.Left;
+			this.progressionPanel.Location = new System.Drawing.Point(0, 0);
+			this.progressionPanel.Name = "progressionPanel";
+			this.progressionPanel.Size = new System.Drawing.Size(156, 600);
+			this.progressionPanel.TabIndex = 2;
 			// 
 			// panelIcon
 			// 
@@ -445,13 +463,127 @@ namespace Backpropagation
 			// 
 			// panelTrain
 			// 
-			this.panelTrain.Controls.Add(this.GoToTest);
+			this.panelTrain.Controls.Add(this.textBoxLimit);
+			this.panelTrain.Controls.Add(this.textBoxEta);
+			this.panelTrain.Controls.Add(this.comboBoxType);
+			this.panelTrain.Controls.Add(this.labelLimit);
+			this.panelTrain.Controls.Add(this.labelEta);
+			this.panelTrain.Controls.Add(this.labelType);
+			this.panelTrain.Controls.Add(this.buttonAddLayer);
+			this.panelTrain.Controls.Add(this.layoutArchitexture);
+			this.panelTrain.Controls.Add(this.labelArchitecture);
+			this.panelTrain.Controls.Add(this.errorChart);
 			this.panelTrain.Controls.Add(this.Train);
+			this.panelTrain.Controls.Add(this.GoToTest);
 			this.panelTrain.Location = new System.Drawing.Point(175, 38);
 			this.panelTrain.Name = "panelTrain";
 			this.panelTrain.Size = new System.Drawing.Size(625, 562);
 			this.panelTrain.TabIndex = 0;
 			this.panelTrain.Visible = false;
+			this.panelTrain.VisibleChanged += new System.EventHandler(this.TrainPanel_Visible);
+			// 
+			// textBoxLimit
+			// 
+			this.textBoxLimit.Location = new System.Drawing.Point(215, 399);
+			this.textBoxLimit.Name = "textBoxLimit";
+			this.textBoxLimit.Size = new System.Drawing.Size(208, 27);
+			this.textBoxLimit.TabIndex = 12;
+			// 
+			// textBoxEta
+			// 
+			this.textBoxEta.Location = new System.Drawing.Point(215, 363);
+			this.textBoxEta.Name = "textBoxEta";
+			this.textBoxEta.Size = new System.Drawing.Size(208, 27);
+			this.textBoxEta.TabIndex = 11;
+			// 
+			// comboBoxType
+			// 
+			this.comboBoxType.FormattingEnabled = true;
+			this.comboBoxType.Location = new System.Drawing.Point(215, 325);
+			this.comboBoxType.Name = "comboBoxType";
+			this.comboBoxType.Size = new System.Drawing.Size(208, 29);
+			this.comboBoxType.TabIndex = 10;
+			// 
+			// labelLimit
+			// 
+			this.labelLimit.AutoSize = true;
+			this.labelLimit.Location = new System.Drawing.Point(10, 405);
+			this.labelLimit.Name = "labelLimit";
+			this.labelLimit.Size = new System.Drawing.Size(117, 21);
+			this.labelLimit.TabIndex = 9;
+			this.labelLimit.Text = "Iteration limit:";
+			// 
+			// labelEta
+			// 
+			this.labelEta.AutoSize = true;
+			this.labelEta.Location = new System.Drawing.Point(10, 369);
+			this.labelEta.Name = "labelEta";
+			this.labelEta.Size = new System.Drawing.Size(118, 21);
+			this.labelEta.TabIndex = 8;
+			this.labelEta.Text = "Learning rate:";
+			// 
+			// labelType
+			// 
+			this.labelType.AutoSize = true;
+			this.labelType.Location = new System.Drawing.Point(10, 333);
+			this.labelType.Name = "labelType";
+			this.labelType.Size = new System.Drawing.Size(192, 21);
+			this.labelType.TabIndex = 7;
+			this.labelType.Text = "Backpropagation type:";
+			// 
+			// buttonAddLayer
+			// 
+			this.buttonAddLayer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonAddLayer.Location = new System.Drawing.Point(215, 262);
+			this.buttonAddLayer.Name = "buttonAddLayer";
+			this.buttonAddLayer.Size = new System.Drawing.Size(208, 48);
+			this.buttonAddLayer.TabIndex = 6;
+			this.buttonAddLayer.Text = "Add layer";
+			this.buttonAddLayer.UseVisualStyleBackColor = true;
+			// 
+			// layoutArchitexture
+			// 
+			this.layoutArchitexture.Location = new System.Drawing.Point(167, 222);
+			this.layoutArchitexture.Name = "layoutArchitexture";
+			this.layoutArchitexture.Size = new System.Drawing.Size(437, 29);
+			this.layoutArchitexture.TabIndex = 5;
+			// 
+			// labelArchitecture
+			// 
+			this.labelArchitecture.AutoSize = true;
+			this.labelArchitecture.Location = new System.Drawing.Point(10, 230);
+			this.labelArchitecture.Name = "labelArchitecture";
+			this.labelArchitecture.Size = new System.Drawing.Size(151, 21);
+			this.labelArchitecture.TabIndex = 4;
+			this.labelArchitecture.Text = "ANN architexture:";
+			// 
+			// errorChart
+			// 
+			chartArea1.Name = "ChartArea1";
+			this.errorChart.ChartAreas.Add(chartArea1);
+			this.errorChart.Location = new System.Drawing.Point(125, 8);
+			this.errorChart.Name = "errorChart";
+			series1.ChartArea = "ChartArea1";
+			series1.Name = "Series1";
+			this.errorChart.Series.Add(series1);
+			this.errorChart.Size = new System.Drawing.Size(411, 208);
+			this.errorChart.TabIndex = 3;
+			this.errorChart.Text = "Per character error";
+			title1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+			title1.Name = "Title1";
+			title1.Text = "Per character error";
+			this.errorChart.Titles.Add(title1);
+			// 
+			// Train
+			// 
+			this.Train.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.Train.Location = new System.Drawing.Point(214, 460);
+			this.Train.Name = "Train";
+			this.Train.Size = new System.Drawing.Size(207, 48);
+			this.Train.TabIndex = 1;
+			this.Train.Text = "Train";
+			this.Train.UseVisualStyleBackColor = true;
+			this.Train.Click += new System.EventHandler(this.Train_Click);
 			// 
 			// GoToTest
 			// 
@@ -465,25 +597,47 @@ namespace Backpropagation
 			this.GoToTest.Visible = false;
 			this.GoToTest.Click += new System.EventHandler(this.GoToTest_Click);
 			// 
-			// Train
-			// 
-			this.Train.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Train.Location = new System.Drawing.Point(214, 460);
-			this.Train.Name = "Train";
-			this.Train.Size = new System.Drawing.Size(207, 48);
-			this.Train.TabIndex = 1;
-			this.Train.Text = "Train";
-			this.Train.UseVisualStyleBackColor = true;
-			this.Train.Click += new System.EventHandler(this.Train_Click);
-			// 
 			// panelTest
 			// 
+			this.panelTest.Controls.Add(this.labelClass);
+			this.panelTest.Controls.Add(this.labelClassStatic);
+			this.panelTest.Controls.Add(this.drawingBoardTest);
 			this.panelTest.Controls.Add(this.Test);
 			this.panelTest.Location = new System.Drawing.Point(175, 38);
 			this.panelTest.Name = "panelTest";
 			this.panelTest.Size = new System.Drawing.Size(625, 562);
 			this.panelTest.TabIndex = 0;
 			this.panelTest.Visible = false;
+			this.panelTest.VisibleChanged += new System.EventHandler(this.TestPanel_Visible);
+			// 
+			// labelClass
+			// 
+			this.labelClass.AutoSize = true;
+			this.labelClass.Location = new System.Drawing.Point(270, 377);
+			this.labelClass.Name = "labelClass";
+			this.labelClass.Size = new System.Drawing.Size(0, 21);
+			this.labelClass.TabIndex = 5;
+			// 
+			// labelClassStatic
+			// 
+			this.labelClassStatic.AutoSize = true;
+			this.labelClassStatic.Location = new System.Drawing.Point(211, 377);
+			this.labelClassStatic.Name = "labelClassStatic";
+			this.labelClassStatic.Size = new System.Drawing.Size(53, 21);
+			this.labelClassStatic.TabIndex = 4;
+			this.labelClassStatic.Text = "Class:";
+			// 
+			// drawingBoardTest
+			// 
+			this.drawingBoardTest.Image = global::Backpropagation.Properties.Resources.Board;
+			this.drawingBoardTest.Location = new System.Drawing.Point(125, 90);
+			this.drawingBoardTest.Name = "drawingBoardTest";
+			this.drawingBoardTest.Size = new System.Drawing.Size(400, 250);
+			this.drawingBoardTest.TabIndex = 3;
+			this.drawingBoardTest.TabStop = false;
+			this.drawingBoardTest.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseDown);
+			this.drawingBoardTest.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseMove);
+			this.drawingBoardTest.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseUp);
 			// 
 			// Test
 			// 
@@ -507,7 +661,7 @@ namespace Backpropagation
 			this.Controls.Add(this.panelTest);
 			this.Controls.Add(this.panelSlider);
 			this.Controls.Add(this.titleBar);
-			this.Controls.Add(this.flowLayoutPanel1);
+			this.Controls.Add(this.progressionPanel);
 			this.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -515,7 +669,7 @@ namespace Backpropagation
 			this.Name = "Main";
 			this.Text = "Main";
 			this.Load += new System.EventHandler(this.Main_Load);
-			this.flowLayoutPanel1.ResumeLayout(false);
+			this.progressionPanel.ResumeLayout(false);
 			this.titleBar.ResumeLayout(false);
 			this.panelTestSet.ResumeLayout(false);
 			this.savePanel.ResumeLayout(false);
@@ -524,14 +678,18 @@ namespace Backpropagation
 			this.panelParam.ResumeLayout(false);
 			this.panelParam.PerformLayout();
 			this.panelTrain.ResumeLayout(false);
+			this.panelTrain.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorChart)).EndInit();
 			this.panelTest.ResumeLayout(false);
+			this.panelTest.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.drawingBoardTest)).EndInit();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private FlowLayoutPanel flowLayoutPanel1;
+		private FlowLayoutPanel progressionPanel;
 		private Button buttonExit;
 		private Panel titleBar;
 		private Panel panelIcon;
@@ -567,6 +725,19 @@ namespace Backpropagation
 		private TextBox fileNameBox;
 		private Button buttonCancel;
 		private Button buttonSave;
+		private PictureBox drawingBoardTest;
+		private Label labelClass;
+		private Label labelClassStatic;
+		private System.Windows.Forms.DataVisualization.Charting.Chart errorChart;
+		private TextBox textBoxLimit;
+		private TextBox textBoxEta;
+		private ComboBox comboBoxType;
+		private Label labelLimit;
+		private Label labelEta;
+		private Label labelType;
+		private Button buttonAddLayer;
+		private FlowLayoutPanel layoutArchitexture;
+		private Label labelArchitecture;
 	}
 }
 

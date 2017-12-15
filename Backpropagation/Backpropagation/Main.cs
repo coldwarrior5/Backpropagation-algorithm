@@ -42,12 +42,11 @@ namespace Backpropagation
 		//
 		// Additional methods
 		//
-		private void SetDrawer()
+		private void SetDrawer(PictureBox board)
 		{
 			if(_symbol is null)
 				_symbol = new SymbolHandler(_params.PerSymbolSamples);
-			if(_drawer is null)
-				_drawer = new Drawer(drawingBoard, _symbol);
+			_drawer = new Drawer(board, _symbol);
 		}
 
 		private void SetButtons()
@@ -107,11 +106,10 @@ namespace Backpropagation
 		private void ParamsPanel_Visible(object sender, EventArgs e)
 		{
 			if (!(sender is Panel panel)) return;
-			if (panel.Visible)
-			{
-				InputParams.FillParamChoices(numOfSymbols, numOfSamples, numOfSymbolSamples, loadTestSet);
-				buttonLoadTestSet.Enabled = loadTestSet.SelectedItem != null;
-			}	
+			if (!panel.Visible) return;
+
+			InputParams.FillParamChoices(numOfSymbols, numOfSamples, numOfSymbolSamples, loadTestSet);
+			buttonLoadTestSet.Enabled = loadTestSet.SelectedItem != null;
 		}
 
 		private void OnValueChanged_Symbol(object sender, EventArgs e)
@@ -166,7 +164,7 @@ namespace Backpropagation
 			if (!(sender is Panel panel)) return;
 			if (!panel.Visible) return;
 
-			SetDrawer();
+			SetDrawer(drawingBoard);
 			_instance = new Instance(_params.Symbols, _params.Samples, _params.PerSymbolSamples);
 			InputParams.SetClasses(tableClasses, _params.Symbols, _params.Samples);
 			SetButtons();
@@ -244,6 +242,13 @@ namespace Backpropagation
 		//
 		// Train panel
 		//
+		private void TrainPanel_Visible(object sender, EventArgs e)
+		{
+			if (!(sender is Panel panel)) return;
+			if (!panel.Visible) return;
+			InputParams.FillTrainChoices(errorChart, layoutArchitexture, comboBoxType, textBoxEta, textBoxLimit);
+		}
+
 		private void Train_Click(object sender, EventArgs e)
 		{
 			Train.Visible = false;
@@ -252,8 +257,9 @@ namespace Backpropagation
 
 		private void GoToTest_Click(object sender, EventArgs e)
 		{
-			UiHandler.PanelVisible(panelTest, _panels);
 			Train.Visible = true;
+			GoToTest.Visible = false;
+			UiHandler.PanelVisible(panelTest, _panels);
 			buttonTest.Enabled = true;
 			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
 		}
@@ -269,9 +275,21 @@ namespace Backpropagation
 		//
 		// Test panel
 		//
+		private void TestPanel_Visible(object sender, EventArgs e)
+		{
+			if (!(sender is Panel panel)) return;
+			if (!panel.Visible) return;
+			SetDrawer(drawingBoardTest);
+		}
+
 		private void Test_Click(object sender, EventArgs e)
 		{
+			// TODO ANN.Guess();
+			_drawer.ResetPoints();
 
+			// TODO Remove later
+			Random rand = new Random();
+			labelClass.Text = rand.Next(1, _params.Symbols + 1).ToString();
 		}
 
 		private void ButtonTest_Click(object sender, EventArgs e)
@@ -279,7 +297,6 @@ namespace Backpropagation
 			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
 			UiHandler.PanelVisible(panelTest, _panels);
 		}
-		
 		// ______________________________________________________________
 	}
 }
