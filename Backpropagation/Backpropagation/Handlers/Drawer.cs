@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,46 +6,40 @@ namespace Backpropagation.Handlers
 {
 	public class Drawer
 	{
-		private List<int> xPositions;
-		private List<int> yPositions;
+		private readonly SymbolHandler _symbol;
+		private readonly PictureBox _screen;
 
-		public Drawer()
+		public Drawer(PictureBox drawingBoard, SymbolHandler symbol)
 		{
-			xPositions = new List<int>();
-			yPositions = new List<int>();
+			_symbol = symbol;
+			
+			if (drawingBoard.Image is null)
+				throw new ArgumentException("Picture box must have image.");
+			_screen = drawingBoard;
 		}
 
 		public void AddPoint(int x, int y)
 		{
-			xPositions.Add(x);
-			yPositions.Add(y);
-		}
-		public void Draw(PictureBox drawingBoard, int x, int y)
-		{
-			((Bitmap)drawingBoard.Image).SetPixel(x, y, Color.Black);
-			
-			drawingBoard.Refresh();
+			_symbol.AddPoint(x, y);
+			Draw(x, y);
 		}
 
-		public void Draw(PictureBox drawingBoard)
+		private void Draw(int x, int y)
 		{
-			for (int i = 0; i < xPositions.Count; i++)
-			{
-				((Bitmap)drawingBoard.Image).SetPixel(xPositions[i], yPositions[i], Color.Black);
-			}
-			drawingBoard.Refresh();
+			((Bitmap)_screen.Image).SetPixel(x, y, Color.Black);
+			_screen.Refresh();
 		}
 
 		public void ResetPoints()
 		{
-			xPositions.Clear();
-			yPositions.Clear();
+			_symbol.ResetPoints();
+			ClearBoard();
 		}
 
-		public void ClearBoard(PictureBox drawingBoard)
+		private void ClearBoard()
 		{
-			drawingBoard.Image = Properties.Resources.Board;
-			drawingBoard.Refresh();
+			_screen.Image = Properties.Resources.Board;
+			_screen.Refresh();
 		}
 	}
 }

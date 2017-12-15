@@ -51,9 +51,9 @@ namespace Backpropagation
 			this.buttonStart.TabIndex = 0;
 			this.buttonStart.Text = "\r\n";
 			this.buttonStart.UseVisualStyleBackColor = false;
-			this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
-			this.buttonStart.MouseEnter += new System.EventHandler(this.buttonStart_MouseEnter);
-			this.buttonStart.MouseLeave += new System.EventHandler(this.buttonStart_MouseLeave);
+			this.buttonStart.Click += new System.EventHandler(this.ButtonStart_Click);
+			this.buttonStart.MouseEnter += new System.EventHandler(this.ButtonStart_MouseEnter);
+			this.buttonStart.MouseLeave += new System.EventHandler(this.ButtonStart_MouseLeave);
 			// 
 			// label1
 			// 
@@ -83,9 +83,9 @@ namespace Backpropagation
 			this.buttonExit.Size = new System.Drawing.Size(32, 32);
 			this.buttonExit.TabIndex = 2;
 			this.buttonExit.UseVisualStyleBackColor = false;
-			this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
-			this.buttonExit.MouseEnter += new System.EventHandler(this.buttonExit_MouseEnter);
-			this.buttonExit.MouseLeave += new System.EventHandler(this.buttonExit_MouseLeave);
+			this.buttonExit.Click += new System.EventHandler(this.ButtonExit_Click);
+			this.buttonExit.MouseEnter += new System.EventHandler(this.ButtonExit_MouseEnter);
+			this.buttonExit.MouseLeave += new System.EventHandler(this.ButtonExit_MouseLeave);
 			// 
 			// titleBar
 			// 
@@ -97,9 +97,9 @@ namespace Backpropagation
 			this.titleBar.Name = "titleBar";
 			this.titleBar.Size = new System.Drawing.Size(800, 32);
 			this.titleBar.TabIndex = 3;
-			this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseDown);
-			this.titleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseMove);
-			this.titleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseUp);
+			this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Titlebar_MouseDown);
+			this.titleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Titlebar_MouseMove);
+			this.titleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Titlebar_MouseUp);
 			// 
 			// Start
 			// 

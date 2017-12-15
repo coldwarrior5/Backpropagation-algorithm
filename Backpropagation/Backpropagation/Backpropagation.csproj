@@ -46,7 +46,14 @@
   <ItemGroup>
     <Compile Include="Handlers\Drawer.cs" />
     <Compile Include="Handlers\ErrorHandler.cs" />
+    <Compile Include="Handlers\FileHandler.cs" />
+    <Compile Include="Handlers\MathHandler.cs" />
+    <Compile Include="Handlers\Parser.cs" />
+    <Compile Include="Handlers\SymbolHandler.cs" />
     <Compile Include="Handlers\UIHandler.cs" />
+    <Compile Include="Structures\InputParams.cs" />
+    <Compile Include="Interfaces\IFileHandler.cs" />
+    <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +68,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structures\Instance.cs" />
+    <Compile Include="Structures\Symbol.cs" />
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

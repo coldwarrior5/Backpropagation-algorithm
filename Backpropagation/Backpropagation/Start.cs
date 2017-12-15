@@ -7,63 +7,62 @@ namespace Backpropagation
 {
 	public partial class Start : Form
 	{
-		private bool _mouseDown;
-		private Point _lastLocation;
+		private readonly Mover _screenMover;
 
 		public Start()
 		{
 			InitializeComponent();
+			_screenMover = new Mover();
 		}
 
-		private void buttonStart_Click(object sender, EventArgs e)
+		private void ButtonStart_Click(object sender, EventArgs e)
 		{
 			Main mainForm = new Main();
 			Hide();
 			mainForm.Show(this);
 		}
 
-		private void buttonStart_MouseEnter(object sender, EventArgs e)
+		private void ButtonStart_MouseEnter(object sender, EventArgs e)
 		{
 			if (sender is Button btn) btn.BackgroundImage = Properties.Resources.ButtonHighlighted;
 		}
 
-		private void buttonStart_MouseLeave(object sender, EventArgs e)
+		private void ButtonStart_MouseLeave(object sender, EventArgs e)
 		{
 			if (sender is Button btn) btn.BackgroundImage = Properties.Resources.Button;
 		}
 
-		private void buttonExit_Click(object sender, EventArgs e)
+		private void ButtonExit_Click(object sender, EventArgs e)
 		{
 			ErrorHandler.TerminateExecution(ErrorCode.UserTermination);
 		}
 
-		private void buttonExit_MouseEnter(object sender, EventArgs e)
+		private void ButtonExit_MouseEnter(object sender, EventArgs e)
 		{
 			if (sender is Button btn) btn.BackgroundImage = Properties.Resources.ExitHighlighted;
 		}
 
-		private void buttonExit_MouseLeave(object sender, EventArgs e)
+		private void ButtonExit_MouseLeave(object sender, EventArgs e)
 		{
 			if (sender is Button btn) btn.BackgroundImage = Properties.Resources.Exit;
 		}
 
-		private void titlebar_MouseDown(object sender, MouseEventArgs e)
+		private void Titlebar_MouseDown(object sender, MouseEventArgs e)
 		{
-			_mouseDown = true;
-			_lastLocation = e.Location;
+			_screenMover.MouseDown(e.Location);
 		}
 
-		private void titlebar_MouseMove(object sender, MouseEventArgs e)
+		private void Titlebar_MouseMove(object sender, MouseEventArgs e)
 		{
-			if (!_mouseDown) return;Location = new Point(
-				Location.X - _lastLocation.X + e.X, Location.Y - _lastLocation.Y + e.Y);
-
+			var moved = _screenMover.MouseMove(e.Location, Location, out Point newLocation);
+			if (moved)
+				Location = newLocation;
 			Update();
 		}
 
-		private void titlebar_MouseUp(object sender, MouseEventArgs e)
+		private void Titlebar_MouseUp(object sender, MouseEventArgs e)
 		{
-			_mouseDown = false;
+			_screenMover.MouseUp();
 		}
 	}
 }

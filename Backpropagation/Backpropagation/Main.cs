@@ -3,21 +3,29 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Backpropagation.Handlers;
+using Backpropagation.Structures;
 
 namespace Backpropagation
 {
 	public partial class Main : Form
 	{
-		private bool _mouseDown;
-		private Point _lastLocation;
+		private Mover _screenMover;
 		private Drawer _drawer;
+		private InputParams _params;
+		private Parser _parser;
+		private Instance _instance;
+		private int _whichClass;
+		private SymbolHandler _symbol;
 		private List<Panel> _panels;
+		private bool _mouseDown;
 
 		public Main()
 		{
 			InitializeComponent();
-			_drawer = new Drawer();
-			_panels = new List<Panel>{panelParam, panelTestSet, panelTrain, panelTest};
+			_params = new InputParams();
+			_parser = new Parser();
+			_screenMover = new Mover();
+			_panels = new List<Panel> { panelParam, panelTestSet, panelTrain, panelTest };
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -29,120 +37,213 @@ namespace Backpropagation
 
 		private void Main_Load(object sender, EventArgs e)
 		{
-
 		}
 
-		private void buttonExit_Click(object sender, EventArgs e)
+		//
+		// Additional methods
+		//
+		private void SetDrawer()
+		{
+			if(_symbol is null)
+				_symbol = new SymbolHandler(_params.PerSymbolSamples);
+			if(_drawer is null)
+				_drawer = new Drawer(drawingBoard, _symbol);
+		}
+
+		private void SetButtons()
+		{
+			for (int i = 0; i < tableClasses.Controls.Count; i++)
+			{
+				if(tableClasses.Controls[i] is Button)
+					tableClasses.Controls[i].Click += B_Click;
+			}
+		}
+		// ______________________________________________________________
+
+		//
+		// Exit button
+		//
+		private void ButtonExit_Click(object sender, EventArgs e)
 		{
 			ErrorHandler.TerminateExecution(ErrorCode.UserTermination);
 		}
 
-		private void buttonExit_MouseEnter(object sender, EventArgs e)
+		private void ButtonExit_MouseEnter(object sender, EventArgs e)
 		{
 			if (sender is Button btn) btn.BackgroundImage = Properties.Resources.ExitHighlighted;
 		}
 
-		private void buttonExit_MouseLeave(object sender, EventArgs e)
+		private void ButtonExit_MouseLeave(object sender, EventArgs e)
 		{
 			if (sender is Button btn) btn.BackgroundImage = Properties.Resources.Exit;
 		}
+		// ______________________________________________________________
 
-		private void titlebar_MouseDown(object sender, MouseEventArgs e)
+		//
+		// Titlebar
+		//
+		private void Titlebar_MouseDown(object sender, MouseEventArgs e)
 		{
-			_mouseDown = true;
-			_lastLocation = e.Location;
+			_screenMover.MouseDown(e.Location);
 		}
 
-		private void titlebar_MouseMove(object sender, MouseEventArgs e)
+		private void Titlebar_MouseMove(object sender, MouseEventArgs e)
 		{
-			if (!_mouseDown) return;
-			Location = new Point(
-				Location.X - _lastLocation.X + e.X, Location.Y - _lastLocation.Y + e.Y);
-
+			var moved = _screenMover.MouseMove(e.Location, Location, out Point newLocation);
+			if (moved)
+				Location = newLocation;
 			Update();
 		}
 
-		private void titlebar_MouseUp(object sender, MouseEventArgs e)
+		private void Titlebar_MouseUp(object sender, MouseEventArgs e)
 		{
-			_mouseDown = false;
+			_screenMover.MouseUp();
+		}
+		// ______________________________________________________________
+
+		//
+		// Parameters panel
+		//
+		private void ParamsPanel_Visible(object sender, EventArgs e)
+		{
+			if (!(sender is Panel panel)) return;
+			if (panel.Visible)
+			{
+				InputParams.FillParamChoices(numOfSymbols, numOfSamples, numOfSymbolSamples, loadTestSet);
+				buttonLoadTestSet.Enabled = loadTestSet.SelectedItem != null;
+			}	
 		}
 
-		private void SetSlider(int top, int height)
+		private void OnValueChanged_Symbol(object sender, EventArgs e)
 		{
-			panelSlider.Top = top;
-			panelSlider.Height = height;
+			_params?.OnValueChanged_Symbol(sender, e);
 		}
 
-		private void buttonParams_Click(object sender, EventArgs e)
+		private void OnValueChanged_Samples(object sender, EventArgs e)
 		{
-			SetSlider(buttonParams.Top, buttonParams.Height);
-			buttonTestSet.Enabled = false;
-			buttonTrain.Enabled = false;
-			buttonTest.Enabled = false;
-			UiHandler.PanelVisible(panelParam, _panels);
+			_params?.OnValueChanged_Samples(sender, e);
 		}
 
-		private void buttonTestSet_Click(object sender, EventArgs e)
+		private void OnValueChanged_SymbolSamples(object sender, EventArgs e)
 		{
-			SetSlider(buttonTestSet.Top, buttonTestSet.Height);
-			buttonTrain.Enabled = false;
-			buttonTest.Enabled = false;
-			UiHandler.PanelVisible(panelTestSet, _panels);
-		}
-
-		private void buttonTrain_Click(object sender, EventArgs e)
-		{
-			SetSlider(buttonTrain.Top, buttonTrain.Height);
-			buttonTest.Enabled = false;
-			UiHandler.PanelVisible(panelTrain, _panels);
-		}
-
-		private void buttonTest_Click(object sender, EventArgs e)
-		{
-			SetSlider(buttonTest.Top, buttonTest.Height);
-			UiHandler.PanelVisible(panelTest, _panels);
-		}
-
-		private void DrawingBoard_MouseDown(object sender, MouseEventArgs e)
-		{
-			_mouseDown = true;
-			_drawer.ResetPoints();
-			_drawer.ClearBoard(drawingBoard);
-			UpdateDrawingBoard(e);
-		}
-
-		private void DrawingBoard_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (!_mouseDown) return;
-			UpdateDrawingBoard(e);
-		}
-
-		private void DrawingBoard_MouseUp(object sender, MouseEventArgs e)
-		{
-			UpdateDrawingBoard(e);
-			_mouseDown = false;
-		}
-
-		private void UpdateDrawingBoard(MouseEventArgs e)
-		{
-			_drawer.AddPoint(e.Location.X, e.Location.Y);
-			_drawer.Draw(drawingBoard, e.Location.X, e.Location.Y);
+			_params?.OnValueChanged_SymbolSamples(sender, e);
 		}
 
 		private void SetParameters_Click(object sender, EventArgs e)
 		{
 			UiHandler.PanelVisible(panelTestSet, _panels);
 			buttonTestSet.Enabled = true;
-			SetSlider(buttonTestSet.Top, buttonTestSet.Height);
+			UiHandler.SetSlider(panelSlider, buttonTestSet.Top, buttonTestSet.Height);
+		}
+
+		private void ButtonLoadTestSet_Click(object sender, EventArgs e)
+		{
+			_instance = _parser.ParseData(loadTestSet.Text);
+			_params.Samples = _instance.NumSamples;
+			_params.Symbols = _instance.NumSymbols;
+			_params.PerSymbolSamples = _instance.NumSymbolSamples;
+			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);
+			buttonTestSet.Enabled = true;
+			buttonTrain.Enabled = true;
+			UiHandler.PanelVisible(panelTrain, _panels);
+		}
+
+		private void ButtonParams_Click(object sender, EventArgs e)
+		{
+			UiHandler.SetSlider(panelSlider, buttonParams.Top, buttonParams.Height);
+			buttonTestSet.Enabled = false;
+			buttonTrain.Enabled = false;
+			buttonTest.Enabled = false;
+			UiHandler.PanelVisible(panelParam, _panels);
+		}
+		// ______________________________________________________________
+
+		//
+		// Test set panel
+		//
+		private void TestSetPanel_Visible(object sender, EventArgs e)
+		{
+			if (!(sender is Panel panel)) return;
+			if (!panel.Visible) return;
+
+			SetDrawer();
+			_instance = new Instance(_params.Symbols, _params.Samples, _params.PerSymbolSamples);
+			InputParams.SetClasses(tableClasses, _params.Symbols, _params.Samples);
+			SetButtons();
+		}
+
+		private void DrawingBoard_MouseDown(object sender, MouseEventArgs e)
+		{
+			_mouseDown = true;
+			_drawer.ResetPoints();
+			_drawer.AddPoint(e.Location.X, e.Location.Y);
+		}
+
+		private void DrawingBoard_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (!_mouseDown) return;
+			_drawer.AddPoint(e.Location.X, e.Location.Y);
+		}
+
+		private void DrawingBoard_MouseUp(object sender, MouseEventArgs e)
+		{
+			_drawer.AddPoint(e.Location.X, e.Location.Y);
+			_symbol.ProcessSymbol();
+			_mouseDown = false;
+		}
+
+		void B_Click(object sender, EventArgs e)
+		{
+			if (sender is Button b)
+			{
+				buttonSetSample.Enabled = true;
+				int.TryParse(b.Text, out int which);
+				_whichClass = which - 1;
+			}
+		}
+
+		private void ButtonSetSample_Click(object sender, EventArgs e)
+		{
+			UiHandler.DecrementValue(tableClasses, _whichClass);
+			buttonSetSample.Enabled = false;
+			_instance.AddSymbol(_symbol.GetXrepresentors(), _symbol.GetYrepresentros(), _whichClass, _params.Symbols);
+			_drawer.ResetPoints();
+			if (UiHandler.AllButtonsDisabled(tableClasses))
+				SaveTestSet.Enabled = true;
 		}
 
 		private void SaveTestSet_Click(object sender, EventArgs e)
 		{
-			UiHandler.PanelVisible(panelTrain, _panels);
-			buttonTrain.Enabled = true;
-			SetSlider(buttonTrain.Top, buttonTrain.Height);
+			savePanel.Visible = true;
 		}
 
+		private void ButtonCancel_Click(object sender, EventArgs e)
+		{
+			savePanel.Visible = false;
+		}
+
+		private void ButtonSave_Click(object sender, EventArgs e)
+		{
+			SaveTestSet.Enabled = false;
+			savePanel.Visible = false;
+			_parser.FormatAndSaveResult(fileNameBox.Text, _instance);
+			UiHandler.PanelVisible(panelTrain, _panels);
+			buttonTrain.Enabled = true;
+			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);
+		}
+
+		private void ButtonTestSet_Click(object sender, EventArgs e)
+		{
+			UiHandler.SetSlider(panelSlider, buttonTestSet.Top, buttonTestSet.Height);
+			buttonTrain.Enabled = false;
+			buttonTest.Enabled = false;
+			UiHandler.PanelVisible(panelTestSet, _panels);
+		}
+		// ______________________________________________________________
+
+		//
+		// Train panel
+		//
 		private void Train_Click(object sender, EventArgs e)
 		{
 			Train.Visible = false;
@@ -154,12 +255,31 @@ namespace Backpropagation
 			UiHandler.PanelVisible(panelTest, _panels);
 			Train.Visible = true;
 			buttonTest.Enabled = true;
-			SetSlider(buttonTest.Top, buttonTest.Height);
+			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
 		}
 
+		private void ButtonTrain_Click(object sender, EventArgs e)
+		{
+			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);
+			buttonTest.Enabled = false;
+			UiHandler.PanelVisible(panelTrain, _panels);
+		}
+		// ______________________________________________________________
+
+		//
+		// Test panel
+		//
 		private void Test_Click(object sender, EventArgs e)
 		{
 
 		}
+
+		private void ButtonTest_Click(object sender, EventArgs e)
+		{
+			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
+			UiHandler.PanelVisible(panelTest, _panels);
+		}
+		
+		// ______________________________________________________________
 	}
 }

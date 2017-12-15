@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace Backpropagation
 {
@@ -40,10 +41,27 @@ namespace Backpropagation
 			this.titleBar = new System.Windows.Forms.Panel();
 			this.buttonExit = new System.Windows.Forms.Button();
 			this.panelSlider = new System.Windows.Forms.Panel();
-			this.drawingBoard = new System.Windows.Forms.PictureBox();
 			this.panelTestSet = new System.Windows.Forms.Panel();
+			this.savePanel = new System.Windows.Forms.Panel();
+			this.fileNameBox = new System.Windows.Forms.TextBox();
+			this.buttonCancel = new System.Windows.Forms.Button();
+			this.buttonSave = new System.Windows.Forms.Button();
+			this.tableClasses = new System.Windows.Forms.TableLayoutPanel();
+			this.buttonSetSample = new System.Windows.Forms.Button();
 			this.SaveTestSet = new System.Windows.Forms.Button();
+			this.drawingBoard = new System.Windows.Forms.PictureBox();
 			this.panelParam = new System.Windows.Forms.Panel();
+			this.loadTestSet = new System.Windows.Forms.ComboBox();
+			this.labelLoadTestSet = new System.Windows.Forms.Label();
+			this.labelNumSymbolSamples = new System.Windows.Forms.Label();
+			this.labelNumSamples = new System.Windows.Forms.Label();
+			this.labelNumSymbols = new System.Windows.Forms.Label();
+			this.numOfSymbolSamples = new System.Windows.Forms.ComboBox();
+			this.numOfSamples = new System.Windows.Forms.ComboBox();
+			this.numOfSymbols = new System.Windows.Forms.ComboBox();
+			this.buttonLoadTestSet = new System.Windows.Forms.Button();
+			this.labelOr = new System.Windows.Forms.Label();
+			this.separator = new System.Windows.Forms.Label();
 			this.SetParameters = new System.Windows.Forms.Button();
 			this.panelTrain = new System.Windows.Forms.Panel();
 			this.GoToTest = new System.Windows.Forms.Button();
@@ -52,8 +70,9 @@ namespace Backpropagation
 			this.Test = new System.Windows.Forms.Button();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.titleBar.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.drawingBoard)).BeginInit();
 			this.panelTestSet.SuspendLayout();
+			this.savePanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.drawingBoard)).BeginInit();
 			this.panelParam.SuspendLayout();
 			this.panelTrain.SuspendLayout();
 			this.panelTest.SuspendLayout();
@@ -94,7 +113,7 @@ namespace Backpropagation
 			this.buttonParams.TabIndex = 1;
 			this.buttonParams.Text = "Define parameters";
 			this.buttonParams.UseVisualStyleBackColor = true;
-			this.buttonParams.Click += new System.EventHandler(this.buttonParams_Click);
+			this.buttonParams.Click += new System.EventHandler(this.ButtonParams_Click);
 			// 
 			// buttonTestSet
 			// 
@@ -108,7 +127,7 @@ namespace Backpropagation
 			this.buttonTestSet.TabIndex = 4;
 			this.buttonTestSet.Text = "Enter test set";
 			this.buttonTestSet.UseVisualStyleBackColor = true;
-			this.buttonTestSet.Click += new System.EventHandler(this.buttonTestSet_Click);
+			this.buttonTestSet.Click += new System.EventHandler(this.ButtonTestSet_Click);
 			// 
 			// buttonTrain
 			// 
@@ -122,7 +141,7 @@ namespace Backpropagation
 			this.buttonTrain.TabIndex = 4;
 			this.buttonTrain.Text = "Train neural network";
 			this.buttonTrain.UseVisualStyleBackColor = true;
-			this.buttonTrain.Click += new System.EventHandler(this.buttonTrain_Click);
+			this.buttonTrain.Click += new System.EventHandler(this.ButtonTrain_Click);
 			// 
 			// buttonTest
 			// 
@@ -136,7 +155,7 @@ namespace Backpropagation
 			this.buttonTest.TabIndex = 4;
 			this.buttonTest.Text = "Test neural network";
 			this.buttonTest.UseVisualStyleBackColor = true;
-			this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+			this.buttonTest.Click += new System.EventHandler(this.ButtonTest_Click);
 			// 
 			// titleBar
 			// 
@@ -148,9 +167,9 @@ namespace Backpropagation
 			this.titleBar.Name = "titleBar";
 			this.titleBar.Size = new System.Drawing.Size(644, 32);
 			this.titleBar.TabIndex = 3;
-			this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseDown);
-			this.titleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseMove);
-			this.titleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.titlebar_MouseUp);
+			this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Titlebar_MouseDown);
+			this.titleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Titlebar_MouseMove);
+			this.titleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Titlebar_MouseUp);
 			// 
 			// buttonExit
 			// 
@@ -167,9 +186,9 @@ namespace Backpropagation
 			this.buttonExit.Size = new System.Drawing.Size(32, 32);
 			this.buttonExit.TabIndex = 0;
 			this.buttonExit.UseVisualStyleBackColor = false;
-			this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
-			this.buttonExit.MouseEnter += new System.EventHandler(this.buttonExit_MouseEnter);
-			this.buttonExit.MouseLeave += new System.EventHandler(this.buttonExit_MouseLeave);
+			this.buttonExit.Click += new System.EventHandler(this.ButtonExit_Click);
+			this.buttonExit.MouseEnter += new System.EventHandler(this.ButtonExit_MouseEnter);
+			this.buttonExit.MouseLeave += new System.EventHandler(this.ButtonExit_MouseLeave);
 			// 
 			// panelSlider
 			// 
@@ -179,21 +198,11 @@ namespace Backpropagation
 			this.panelSlider.Size = new System.Drawing.Size(10, 93);
 			this.panelSlider.TabIndex = 4;
 			// 
-			// drawingBoard
-			// 
-			this.drawingBoard.BackColor = System.Drawing.Color.White;
-			this.drawingBoard.Image = ((System.Drawing.Image)(resources.GetObject("drawingBoard.Image")));
-			this.drawingBoard.Location = new System.Drawing.Point(125, 32);
-			this.drawingBoard.Name = "drawingBoard";
-			this.drawingBoard.Size = new System.Drawing.Size(400, 320);
-			this.drawingBoard.TabIndex = 5;
-			this.drawingBoard.TabStop = false;
-			this.drawingBoard.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseDown);
-			this.drawingBoard.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseMove);
-			this.drawingBoard.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseUp);
-			// 
 			// panelTestSet
 			// 
+			this.panelTestSet.Controls.Add(this.savePanel);
+			this.panelTestSet.Controls.Add(this.tableClasses);
+			this.panelTestSet.Controls.Add(this.buttonSetSample);
 			this.panelTestSet.Controls.Add(this.SaveTestSet);
 			this.panelTestSet.Controls.Add(this.drawingBoard);
 			this.panelTestSet.Location = new System.Drawing.Point(175, 38);
@@ -201,9 +210,77 @@ namespace Backpropagation
 			this.panelTestSet.Size = new System.Drawing.Size(625, 562);
 			this.panelTestSet.TabIndex = 6;
 			this.panelTestSet.Visible = false;
+			this.panelTestSet.VisibleChanged += new System.EventHandler(this.TestSetPanel_Visible);
+			// 
+			// savePanel
+			// 
+			this.savePanel.Controls.Add(this.fileNameBox);
+			this.savePanel.Controls.Add(this.buttonCancel);
+			this.savePanel.Controls.Add(this.buttonSave);
+			this.savePanel.Location = new System.Drawing.Point(184, 183);
+			this.savePanel.Name = "savePanel";
+			this.savePanel.Size = new System.Drawing.Size(270, 136);
+			this.savePanel.TabIndex = 9;
+			this.savePanel.Visible = false;
+			// 
+			// fileNameBox
+			// 
+			this.fileNameBox.Location = new System.Drawing.Point(31, 17);
+			this.fileNameBox.Name = "fileNameBox";
+			this.fileNameBox.Size = new System.Drawing.Size(207, 27);
+			this.fileNameBox.TabIndex = 2;
+			this.fileNameBox.Text = "testSet";
+			// 
+			// buttonCancel
+			// 
+			this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonCancel.Location = new System.Drawing.Point(144, 71);
+			this.buttonCancel.Name = "buttonCancel";
+			this.buttonCancel.Size = new System.Drawing.Size(113, 43);
+			this.buttonCancel.TabIndex = 1;
+			this.buttonCancel.Text = "Cancel";
+			this.buttonCancel.UseVisualStyleBackColor = true;
+			this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
+			// 
+			// buttonSave
+			// 
+			this.buttonSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonSave.Location = new System.Drawing.Point(16, 71);
+			this.buttonSave.Name = "buttonSave";
+			this.buttonSave.Size = new System.Drawing.Size(113, 43);
+			this.buttonSave.TabIndex = 0;
+			this.buttonSave.Text = "Save";
+			this.buttonSave.UseVisualStyleBackColor = true;
+			this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
+			// 
+			// tableClasses
+			// 
+			this.tableClasses.ColumnCount = 1;
+			this.tableClasses.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableClasses.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableClasses.Location = new System.Drawing.Point(14, 268);
+			this.tableClasses.Name = "tableClasses";
+			this.tableClasses.RowCount = 1;
+			this.tableClasses.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableClasses.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableClasses.Size = new System.Drawing.Size(599, 106);
+			this.tableClasses.TabIndex = 8;
+			// 
+			// buttonSetSample
+			// 
+			this.buttonSetSample.Enabled = false;
+			this.buttonSetSample.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonSetSample.Location = new System.Drawing.Point(214, 394);
+			this.buttonSetSample.Name = "buttonSetSample";
+			this.buttonSetSample.Size = new System.Drawing.Size(207, 48);
+			this.buttonSetSample.TabIndex = 7;
+			this.buttonSetSample.Text = "Set sample";
+			this.buttonSetSample.UseVisualStyleBackColor = true;
+			this.buttonSetSample.Click += new System.EventHandler(this.ButtonSetSample_Click);
 			// 
 			// SaveTestSet
 			// 
+			this.SaveTestSet.Enabled = false;
 			this.SaveTestSet.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.SaveTestSet.Location = new System.Drawing.Point(214, 460);
 			this.SaveTestSet.Name = "SaveTestSet";
@@ -213,18 +290,152 @@ namespace Backpropagation
 			this.SaveTestSet.UseVisualStyleBackColor = true;
 			this.SaveTestSet.Click += new System.EventHandler(this.SaveTestSet_Click);
 			// 
+			// drawingBoard
+			// 
+			this.drawingBoard.BackColor = System.Drawing.Color.White;
+			this.drawingBoard.Image = ((System.Drawing.Image)(resources.GetObject("drawingBoard.Image")));
+			this.drawingBoard.Location = new System.Drawing.Point(125, 0);
+			this.drawingBoard.Name = "drawingBoard";
+			this.drawingBoard.Size = new System.Drawing.Size(400, 250);
+			this.drawingBoard.TabIndex = 5;
+			this.drawingBoard.TabStop = false;
+			this.drawingBoard.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseDown);
+			this.drawingBoard.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseMove);
+			this.drawingBoard.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawingBoard_MouseUp);
+			// 
 			// panelParam
 			// 
+			this.panelParam.Controls.Add(this.loadTestSet);
+			this.panelParam.Controls.Add(this.labelLoadTestSet);
+			this.panelParam.Controls.Add(this.labelNumSymbolSamples);
+			this.panelParam.Controls.Add(this.labelNumSamples);
+			this.panelParam.Controls.Add(this.labelNumSymbols);
+			this.panelParam.Controls.Add(this.numOfSymbolSamples);
+			this.panelParam.Controls.Add(this.numOfSamples);
+			this.panelParam.Controls.Add(this.numOfSymbols);
+			this.panelParam.Controls.Add(this.buttonLoadTestSet);
+			this.panelParam.Controls.Add(this.labelOr);
+			this.panelParam.Controls.Add(this.separator);
 			this.panelParam.Controls.Add(this.SetParameters);
 			this.panelParam.Location = new System.Drawing.Point(175, 38);
 			this.panelParam.Name = "panelParam";
 			this.panelParam.Size = new System.Drawing.Size(625, 562);
 			this.panelParam.TabIndex = 6;
+			this.panelParam.VisibleChanged += new System.EventHandler(this.ParamsPanel_Visible);
+			// 
+			// loadTestSet
+			// 
+			this.loadTestSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.loadTestSet.FormattingEnabled = true;
+			this.loadTestSet.Location = new System.Drawing.Point(372, 118);
+			this.loadTestSet.Name = "loadTestSet";
+			this.loadTestSet.Size = new System.Drawing.Size(153, 29);
+			this.loadTestSet.TabIndex = 11;
+			// 
+			// labelLoadTestSet
+			// 
+			this.labelLoadTestSet.AutoSize = true;
+			this.labelLoadTestSet.Location = new System.Drawing.Point(368, 90);
+			this.labelLoadTestSet.Name = "labelLoadTestSet";
+			this.labelLoadTestSet.Size = new System.Drawing.Size(130, 21);
+			this.labelLoadTestSet.TabIndex = 10;
+			this.labelLoadTestSet.Text = "Choose test set";
+			// 
+			// labelNumSymbolSamples
+			// 
+			this.labelNumSymbolSamples.AutoSize = true;
+			this.labelNumSymbolSamples.Location = new System.Drawing.Point(44, 276);
+			this.labelNumSymbolSamples.Name = "labelNumSymbolSamples";
+			this.labelNumSymbolSamples.Size = new System.Drawing.Size(215, 21);
+			this.labelNumSymbolSamples.TabIndex = 9;
+			this.labelNumSymbolSamples.Text = "Number of symbol samples";
+			// 
+			// labelNumSamples
+			// 
+			this.labelNumSamples.AutoSize = true;
+			this.labelNumSamples.Location = new System.Drawing.Point(44, 183);
+			this.labelNumSamples.Name = "labelNumSamples";
+			this.labelNumSamples.Size = new System.Drawing.Size(158, 21);
+			this.labelNumSamples.TabIndex = 8;
+			this.labelNumSamples.Text = "Number of samples";
+			// 
+			// labelNumSymbols
+			// 
+			this.labelNumSymbols.AutoSize = true;
+			this.labelNumSymbols.Location = new System.Drawing.Point(44, 90);
+			this.labelNumSymbols.Name = "labelNumSymbols";
+			this.labelNumSymbols.Size = new System.Drawing.Size(155, 21);
+			this.labelNumSymbols.TabIndex = 7;
+			this.labelNumSymbols.Text = "Number of symbols";
+			// 
+			// numOfSymbolSamples
+			// 
+			this.numOfSymbolSamples.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.numOfSymbolSamples.FormattingEnabled = true;
+			this.numOfSymbolSamples.Location = new System.Drawing.Point(48, 304);
+			this.numOfSymbolSamples.Name = "numOfSymbolSamples";
+			this.numOfSymbolSamples.Size = new System.Drawing.Size(151, 29);
+			this.numOfSymbolSamples.TabIndex = 6;
+			this.numOfSymbolSamples.SelectedValueChanged += new System.EventHandler(this.OnValueChanged_SymbolSamples);
+			// 
+			// numOfSamples
+			// 
+			this.numOfSamples.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.numOfSamples.FormattingEnabled = true;
+			this.numOfSamples.Location = new System.Drawing.Point(48, 211);
+			this.numOfSamples.Name = "numOfSamples";
+			this.numOfSamples.Size = new System.Drawing.Size(151, 29);
+			this.numOfSamples.TabIndex = 5;
+			this.numOfSamples.SelectedValueChanged += new System.EventHandler(this.OnValueChanged_Samples);
+			// 
+			// numOfSymbols
+			// 
+			this.numOfSymbols.BackColor = System.Drawing.SystemColors.Window;
+			this.numOfSymbols.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.numOfSymbols.FormattingEnabled = true;
+			this.numOfSymbols.Location = new System.Drawing.Point(48, 118);
+			this.numOfSymbols.Name = "numOfSymbols";
+			this.numOfSymbols.Size = new System.Drawing.Size(151, 29);
+			this.numOfSymbols.TabIndex = 4;
+			this.numOfSymbols.SelectedValueChanged += new System.EventHandler(this.OnValueChanged_Symbol);
+			// 
+			// buttonLoadTestSet
+			// 
+			this.buttonLoadTestSet.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonLoadTestSet.Location = new System.Drawing.Point(368, 460);
+			this.buttonLoadTestSet.Name = "buttonLoadTestSet";
+			this.buttonLoadTestSet.Size = new System.Drawing.Size(207, 48);
+			this.buttonLoadTestSet.TabIndex = 3;
+			this.buttonLoadTestSet.Text = "Load test set";
+			this.buttonLoadTestSet.UseVisualStyleBackColor = true;
+			this.buttonLoadTestSet.Click += new System.EventHandler(this.ButtonLoadTestSet_Click);
+			// 
+			// labelOr
+			// 
+			this.labelOr.AutoSize = true;
+			this.labelOr.BackColor = System.Drawing.Color.Transparent;
+			this.labelOr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.labelOr.Location = new System.Drawing.Point(293, 230);
+			this.labelOr.Name = "labelOr";
+			this.labelOr.Size = new System.Drawing.Size(34, 21);
+			this.labelOr.TabIndex = 2;
+			this.labelOr.Text = "OR";
+			// 
+			// separator
+			// 
+			this.separator.BackColor = System.Drawing.Color.LightSkyBlue;
+			this.separator.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.separator.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.separator.ForeColor = System.Drawing.Color.LightSkyBlue;
+			this.separator.Location = new System.Drawing.Point(307, 8);
+			this.separator.Name = "separator";
+			this.separator.Size = new System.Drawing.Size(5, 500);
+			this.separator.TabIndex = 1;
 			// 
 			// SetParameters
 			// 
 			this.SetParameters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.SetParameters.Location = new System.Drawing.Point(214, 460);
+			this.SetParameters.Location = new System.Drawing.Point(48, 460);
 			this.SetParameters.Name = "SetParameters";
 			this.SetParameters.Size = new System.Drawing.Size(207, 48);
 			this.SetParameters.TabIndex = 0;
@@ -306,9 +517,12 @@ namespace Backpropagation
 			this.Load += new System.EventHandler(this.Main_Load);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.titleBar.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.drawingBoard)).EndInit();
 			this.panelTestSet.ResumeLayout(false);
+			this.savePanel.ResumeLayout(false);
+			this.savePanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.drawingBoard)).EndInit();
 			this.panelParam.ResumeLayout(false);
+			this.panelParam.PerformLayout();
 			this.panelTrain.ResumeLayout(false);
 			this.panelTest.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -336,6 +550,23 @@ namespace Backpropagation
 		private Button SaveTestSet;
 		private Button GoToTest;
 		private Button Test;
+		private Label labelOr;
+		private Label separator;
+		private Button buttonLoadTestSet;
+		private ComboBox numOfSymbolSamples;
+		private ComboBox numOfSamples;
+		private ComboBox numOfSymbols;
+		private ComboBox loadTestSet;
+		private Label labelLoadTestSet;
+		private Label labelNumSymbolSamples;
+		private Label labelNumSamples;
+		private Label labelNumSymbols;
+		private Button buttonSetSample;
+		private TableLayoutPanel tableClasses;
+		private Panel savePanel;
+		private TextBox fileNameBox;
+		private Button buttonCancel;
+		private Button buttonSave;
 	}
 }
 

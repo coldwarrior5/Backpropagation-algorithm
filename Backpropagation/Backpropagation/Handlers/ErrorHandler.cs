@@ -8,8 +8,10 @@ namespace Backpropagation.Handlers
         InvalidInputParameter,
         UserTermination,
         NoSuchFile,
-        ImproperLine
-    }
+        ImproperLine,
+	    NotEnoughSamples,
+	    TooManySamples
+	}
     
     public static class ErrorHandler
     {
@@ -40,7 +42,13 @@ namespace Backpropagation.Handlers
                 case ErrorCode.ImproperLine:
                     explanation = "File contains irregular line.";
                     break;
-                default:
+	            case ErrorCode.NotEnoughSamples:
+		            explanation = "There is not enough defined samples.";
+					break;
+	            case ErrorCode.TooManySamples:
+		            explanation = "There is too many defined samples.";
+					break;
+	            default:
                     throw new ArgumentException("Such error is non existant.");
             }
             return explanation;
