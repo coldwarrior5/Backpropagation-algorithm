@@ -44,7 +44,7 @@ namespace Backpropagation
 		//
 		private void SetDrawer(PictureBox board)
 		{
-			if(_symbol is null)
+			if(_symbol is null || _symbol.GetSampleSize() != _params.PerSymbolSamples)
 				_symbol = new SymbolHandler(_params.PerSymbolSamples);
 			_drawer = new Drawer(board, _symbol);
 		}

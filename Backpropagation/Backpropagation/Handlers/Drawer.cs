@@ -26,6 +26,10 @@ namespace Backpropagation.Handlers
 
 		private void Draw(int x, int y)
 		{
+			if (x >= _screen.Width || x < 0)
+				return;
+			if (y >= _screen.Height || y < 0)
+				return;
 			((Bitmap)_screen.Image).SetPixel(x, y, Color.Black);
 			_screen.Refresh();
 		}

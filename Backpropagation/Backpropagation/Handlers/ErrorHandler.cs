@@ -4,9 +4,9 @@ namespace Backpropagation.Handlers
 {
     public enum ErrorCode
     {
-        InvalidNumInputParameters,
+	    UserTermination = 0,
+		InvalidNumInputParameters,
         InvalidInputParameter,
-        UserTermination,
         NoSuchFile,
         ImproperLine,
 	    NotEnoughSamples,

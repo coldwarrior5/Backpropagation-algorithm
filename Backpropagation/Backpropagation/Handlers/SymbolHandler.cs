@@ -48,6 +48,11 @@ namespace Backpropagation.Handlers
 			FindReprentors();
 		}
 
+		public int GetSampleSize()
+		{
+			return _samples;
+		}
+
 		public List<double> GetXrepresentors()
 		{
 			return _xRepresentors;

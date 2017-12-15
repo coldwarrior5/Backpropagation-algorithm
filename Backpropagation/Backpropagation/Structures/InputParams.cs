@@ -22,9 +22,10 @@ namespace Backpropagation.Structures
 		public const int NumSamplesDefault = 20;
 		public const int NumSamplesMax = 30;
 
-		public const int NumSymbolSamplesMin = 10;
+		public const int NumSymbolSamplesMin = 20;
 		public const int NumSymbolSamplesDefault = 20;
-		public const int NumSymbolSamplesMax = 100;
+		public const int NumSymbolSamplesMax = 50;
+		public const int NumSymbolSamplesDelta = 5;
 
 		public const double EtaMin = 0.001;
 		public const double EtaDefault = 0.01;
@@ -64,7 +65,7 @@ namespace Backpropagation.Structures
 			FillComboBox(loadTestSet);
 			FillComboBox(symbolBox, NumSymbolMin, NumSymbolMax);
 			FillComboBox(samplesBox, NumSamplesMin, NumSamplesMax);
-			FillComboBox(symbolSamplesBox, NumSymbolSamplesMin, NumSymbolSamplesMax);
+			FillComboBox(symbolSamplesBox, NumSymbolSamplesMin, NumSymbolSamplesMax, NumSymbolSamplesDelta);
 			symbolBox.SelectedItem = NumSymbolDefault;
 			samplesBox.SelectedItem = NumSamplesDefault;
 			symbolSamplesBox.SelectedItem = NumSymbolSamplesDefault;
@@ -80,11 +81,11 @@ namespace Backpropagation.Structures
 			limit.Text = LimitDefault.ToString(CultureInfo.InvariantCulture);
 		}
 
-		private static void FillComboBox(ComboBox comboBox, int minValue, int maxValue)
+		private static void FillComboBox(ComboBox comboBox, int minValue, int maxValue, int delta = 1)
 		{
 			if(comboBox.Items.Count != 0)
 				comboBox.Items.Clear();
-			for (int i = minValue; i <= maxValue; i++)
+			for (int i = minValue; i <= maxValue; i += delta)
 			{
 				comboBox.Items.Add(i);
 			}
