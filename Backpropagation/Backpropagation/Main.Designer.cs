@@ -31,9 +31,9 @@ namespace Backpropagation
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-			System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+			System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
 			this.progressionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.panelIcon = new System.Windows.Forms.Panel();
 			this.buttonParams = new System.Windows.Forms.Button();
@@ -73,7 +73,6 @@ namespace Backpropagation
 			this.labelEta = new System.Windows.Forms.Label();
 			this.labelType = new System.Windows.Forms.Label();
 			this.buttonAddLayer = new System.Windows.Forms.Button();
-			this.layoutArchitexture = new System.Windows.Forms.FlowLayoutPanel();
 			this.labelArchitecture = new System.Windows.Forms.Label();
 			this.errorChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.Train = new System.Windows.Forms.Button();
@@ -83,6 +82,7 @@ namespace Backpropagation
 			this.labelClassStatic = new System.Windows.Forms.Label();
 			this.drawingBoardTest = new System.Windows.Forms.PictureBox();
 			this.Test = new System.Windows.Forms.Button();
+			this.layoutArchitexture = new System.Windows.Forms.TableLayoutPanel();
 			this.progressionPanel.SuspendLayout();
 			this.titleBar.SuspendLayout();
 			this.panelTestSet.SuspendLayout();
@@ -462,6 +462,7 @@ namespace Backpropagation
 			// 
 			// panelTrain
 			// 
+			this.panelTrain.Controls.Add(this.layoutArchitexture);
 			this.panelTrain.Controls.Add(this.textBoxLimit);
 			this.panelTrain.Controls.Add(this.textBoxEta);
 			this.panelTrain.Controls.Add(this.comboBoxType);
@@ -469,7 +470,6 @@ namespace Backpropagation
 			this.panelTrain.Controls.Add(this.labelEta);
 			this.panelTrain.Controls.Add(this.labelType);
 			this.panelTrain.Controls.Add(this.buttonAddLayer);
-			this.panelTrain.Controls.Add(this.layoutArchitexture);
 			this.panelTrain.Controls.Add(this.labelArchitecture);
 			this.panelTrain.Controls.Add(this.errorChart);
 			this.panelTrain.Controls.Add(this.Train);
@@ -487,7 +487,8 @@ namespace Backpropagation
 			this.textBoxLimit.Name = "textBoxLimit";
 			this.textBoxLimit.Size = new System.Drawing.Size(208, 27);
 			this.textBoxLimit.TabIndex = 12;
-			this.textBoxLimit.KeyDown += new KeyEventHandler(this.Iterations_Changed);
+			this.textBoxLimit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Iterations_Changed);
+			this.textBoxLimit.Leave += new System.EventHandler(this.Iterations_Left);
 			// 
 			// textBoxEta
 			// 
@@ -495,7 +496,8 @@ namespace Backpropagation
 			this.textBoxEta.Name = "textBoxEta";
 			this.textBoxEta.Size = new System.Drawing.Size(208, 27);
 			this.textBoxEta.TabIndex = 11;
-			this.textBoxEta.KeyDown += new KeyEventHandler(this.Eta_Changed);
+			this.textBoxEta.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Eta_Changed);
+			this.textBoxEta.Leave += new System.EventHandler(this.Eta_Left);
 			// 
 			// comboBoxType
 			// 
@@ -545,13 +547,6 @@ namespace Backpropagation
 			this.buttonAddLayer.UseVisualStyleBackColor = true;
 			this.buttonAddLayer.Click += new System.EventHandler(this.ButtonAddLayer_Click);
 			// 
-			// layoutArchitexture
-			// 
-			this.layoutArchitexture.Location = new System.Drawing.Point(167, 222);
-			this.layoutArchitexture.Name = "layoutArchitexture";
-			this.layoutArchitexture.Size = new System.Drawing.Size(437, 29);
-			this.layoutArchitexture.TabIndex = 5;
-			// 
 			// labelArchitecture
 			// 
 			this.labelArchitecture.AutoSize = true;
@@ -563,20 +558,20 @@ namespace Backpropagation
 			// 
 			// errorChart
 			// 
-			chartArea1.Name = "ChartArea1";
-			this.errorChart.ChartAreas.Add(chartArea1);
+			chartArea2.Name = "ChartArea1";
+			this.errorChart.ChartAreas.Add(chartArea2);
 			this.errorChart.Location = new System.Drawing.Point(125, 8);
 			this.errorChart.Name = "errorChart";
-			series1.ChartArea = "ChartArea1";
-			series1.Name = "Series1";
-			this.errorChart.Series.Add(series1);
+			series2.ChartArea = "ChartArea1";
+			series2.Name = "Series1";
+			this.errorChart.Series.Add(series2);
 			this.errorChart.Size = new System.Drawing.Size(411, 208);
 			this.errorChart.TabIndex = 3;
 			this.errorChart.Text = "Per character error";
-			title1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-			title1.Name = "Title1";
-			title1.Text = "Per character error";
-			this.errorChart.Titles.Add(title1);
+			title2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+			title2.Name = "Title1";
+			title2.Text = "Per character error";
+			this.errorChart.Titles.Add(title2);
 			// 
 			// Train
 			// 
@@ -653,6 +648,19 @@ namespace Backpropagation
 			this.Test.Text = "Test character";
 			this.Test.UseVisualStyleBackColor = true;
 			this.Test.Click += new System.EventHandler(this.Test_Click);
+			// 
+			// layoutArchitexture
+			// 
+			this.layoutArchitexture.ColumnCount = 2;
+			this.layoutArchitexture.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.layoutArchitexture.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.layoutArchitexture.Location = new System.Drawing.Point(167, 222);
+			this.layoutArchitexture.Name = "layoutArchitexture";
+			this.layoutArchitexture.RowCount = 2;
+			this.layoutArchitexture.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.layoutArchitexture.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.layoutArchitexture.Size = new System.Drawing.Size(446, 29);
+			this.layoutArchitexture.TabIndex = 13;
 			// 
 			// Main
 			// 
@@ -740,8 +748,8 @@ namespace Backpropagation
 		private Label labelEta;
 		private Label labelType;
 		private Button buttonAddLayer;
-		private FlowLayoutPanel layoutArchitexture;
 		private Label labelArchitecture;
+		private TableLayoutPanel layoutArchitexture;
 	}
 }
 

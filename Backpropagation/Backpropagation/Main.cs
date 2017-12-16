@@ -75,8 +75,12 @@ namespace Backpropagation
 		{
 			for (int i = 0; i < layoutArchitexture.Controls.Count; i++)
 			{
-				if (tableClasses.Controls[i] is TextBox)
-					tableClasses.Controls[i].TextChanged += LayerNumber_Changed;
+				if (layoutArchitexture.Controls[i] is TextBox)
+				{
+					layoutArchitexture.Controls[i].KeyDown += LayerNumber_Changed;
+					layoutArchitexture.Controls[i].Leave += LayerNumber_Left;
+				}
+					
 			}
 		}
 		// ______________________________________________________________
@@ -273,10 +277,33 @@ namespace Backpropagation
 			SetTexts();
 		}
 
-		private void LayerNumber_Changed(object sender, EventArgs e)
+		private void LayerNumber_Changed(object sender, KeyEventArgs e)
 		{
 			if (!(sender is TextBox t)) return;
 
+			switch (e.KeyCode)
+			{
+				case Keys.Enter:
+					var splits = t.Name.Split('_');
+					int.TryParse(splits[1], out int whichLayer);
+					int.TryParse(t.Text, out int howMany);
+					howMany = MathHandler.Clamp(howMany, NeuralNetwork.NeuronMin, NeuralNetwork.NeuronMax);
+					t.Text = howMany.ToString();
+					_ann.UpdateLayer(whichLayer, howMany);
+					break;
+				case Keys.Escape:
+					splits = t.Name.Split('_');
+					int.TryParse(splits[1], out whichLayer);
+					t.Text = _ann.GetArchitecture()[whichLayer].ToString();
+					break;
+			}
+			
+		}
+
+		private void LayerNumber_Left(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox t)) return;
+			
 			var splits = t.Name.Split('_');
 			int.TryParse(splits[1], out int whichLayer);
 			int.TryParse(t.Text, out int howMany);
@@ -289,6 +316,7 @@ namespace Backpropagation
 		{
 			_ann.AddLayer();
 			NeuralNetwork.FillPanel(layoutArchitexture, _ann);
+			SetTexts();
 		}
 
 		private void OnValueChanged_Type(object sender, EventArgs e)
@@ -314,6 +342,16 @@ namespace Backpropagation
 			}
 		}
 
+		private void Eta_Left(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox t)) return;
+			
+			double.TryParse(t.Text, out double eta);
+			eta = MathHandler.Clamp(eta, NeuralNetwork.EtaMin, NeuralNetwork.EtaMax);
+			t.Text = eta.ToString(CultureInfo.InvariantCulture);
+			_ann.ChangeEta(eta);
+		}
+
 		private void Iterations_Changed(object sender, KeyEventArgs e)
 		{
 			if (!(sender is TextBox t)) return;
@@ -330,8 +368,16 @@ namespace Backpropagation
 					t.Text = _ann.GetIterations().ToString(CultureInfo.InvariantCulture);
 					break;
 			}
+		}
 
+		private void Iterations_Left(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox t)) return;
 			
+			int.TryParse(t.Text, out int iterations);
+			iterations = MathHandler.Clamp(iterations, NeuralNetwork.LimitMin, NeuralNetwork.LimitMax);
+			t.Text = iterations.ToString();
+			_ann.ChangeIterations(iterations);
 		}
 
 		private void Train_Click(object sender, EventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
@@ -147,12 +148,11 @@ namespace Backpropagation.ANN
 		{
 			if (sender is ComboBox box)
 			{
-				_bacpropagationType = BackpropagationHandler.ToEnum(box.SelectedText);
-				box.SelectedText = BackpropagationHandler.ToString(_bacpropagationType);
+				_bacpropagationType = BackpropagationHandler.ToEnum((string)box.SelectedItem);
 			}
 		}
 
-		public static void FillTrainChoices(Chart graph, FlowLayoutPanel layoutArchitecture, ComboBox backpropagationType, TextBox eta, TextBox limit, NeuralNetwork ann)
+		public static void FillTrainChoices(Chart graph, TableLayoutPanel layoutArchitecture, ComboBox backpropagationType, TextBox eta, TextBox limit, NeuralNetwork ann)
 		{
 			FillPanel(layoutArchitecture, ann);
 			backpropagationType.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Batch));
@@ -163,16 +163,34 @@ namespace Backpropagation.ANN
 			limit.Text = LimitDefault.ToString(CultureInfo.InvariantCulture);
 		}
 
-		public static void FillPanel(FlowLayoutPanel panel, NeuralNetwork ann)
+		public static void FillPanel(TableLayoutPanel panel, NeuralNetwork ann)
 		{
+			int rowCount = 1;
+			int columnCount = ann.NumberOfLayers;
+			panel.ColumnCount = columnCount;
+			panel.RowCount = rowCount;
+
+			panel.ColumnStyles.Clear();
+			panel.RowStyles.Clear();
 			panel.Controls.Clear();
+
+			for (var i = 0; i < columnCount; i++)
+			{
+				panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columnCount));
+			}
+			for (var i = 0; i < rowCount; i++)
+			{
+				panel.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rowCount));
+			}
 
 			Label input = new Label
 			{
 				Text = ann._architecture[0].ToString(),
+				AutoSize = false,
+				TextAlign = ContentAlignment.MiddleCenter,
 				Dock = DockStyle.Fill
 			};
-			panel.Container?.Add(input);
+			panel.Controls.Add(input);
 
 			
 			for (int i = 1; i < ann.NumberOfLayers - 1; i++)
@@ -183,16 +201,18 @@ namespace Backpropagation.ANN
 					Name = $"t_{i}",
 					Dock = DockStyle.Fill
 				};
-				panel.Container?.Add(box);
+				panel.Controls.Add(box);
 
 			}
 			
 			Label output = new Label
 			{
 				Text = ann._architecture[ann.NumberOfLayers - 1].ToString(),
+				AutoSize = false,
+				TextAlign = ContentAlignment.MiddleCenter,
 				Dock = DockStyle.Fill
 			};
-			panel.Container?.Add(output);
+			panel.Controls.Add(output);
 		}
 
 		public static int WhichClass(List<double> solution)
