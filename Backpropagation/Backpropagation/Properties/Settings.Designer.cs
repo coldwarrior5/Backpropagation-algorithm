@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Backpropagation.Properties
+namespace BackpropagationAlgorithm.Properties
 {
 
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
+using Backpropagation.ANN;
 using Backpropagation.Handlers;
 using Backpropagation.Structures;
 
@@ -18,6 +20,9 @@ namespace Backpropagation
 		private SymbolHandler _symbol;
 		private List<Panel> _panels;
 		private bool _mouseDown;
+
+		private List<int> _architecture;
+		private NeuralNetwork _ann;
 
 		public Main()
 		{
@@ -49,12 +54,29 @@ namespace Backpropagation
 			_drawer = new Drawer(board, _symbol);
 		}
 
+		private void SetNeuralNetwork()
+		{
+			if(_ann is null)
+				_ann = new NeuralNetwork(_instance);
+			else if(!_ann.IsEquals(_architecture))
+				_ann = new NeuralNetwork(_instance);
+		}
+
 		private void SetButtons()
 		{
 			for (int i = 0; i < tableClasses.Controls.Count; i++)
 			{
 				if(tableClasses.Controls[i] is Button)
-					tableClasses.Controls[i].Click += B_Click;
+					tableClasses.Controls[i].Click += ClassButton_Click;
+			}
+		}
+
+		private void SetTexts()
+		{
+			for (int i = 0; i < layoutArchitexture.Controls.Count; i++)
+			{
+				if (tableClasses.Controls[i] is TextBox)
+					tableClasses.Controls[i].TextChanged += LayerNumber_Changed;
 			}
 		}
 		// ______________________________________________________________
@@ -190,14 +212,13 @@ namespace Backpropagation
 			_mouseDown = false;
 		}
 
-		void B_Click(object sender, EventArgs e)
+		private void ClassButton_Click(object sender, EventArgs e)
 		{
-			if (sender is Button b)
-			{
-				buttonSetSample.Enabled = true;
-				int.TryParse(b.Text, out int which);
-				_whichClass = which - 1;
-			}
+			if (!(sender is Button b)) return;
+
+			buttonSetSample.Enabled = true;
+			int.TryParse(b.Text, out int which);
+			_whichClass = which - 1;
 		}
 
 		private void ButtonSetSample_Click(object sender, EventArgs e)
@@ -246,13 +267,78 @@ namespace Backpropagation
 		{
 			if (!(sender is Panel panel)) return;
 			if (!panel.Visible) return;
-			InputParams.FillTrainChoices(errorChart, layoutArchitexture, comboBoxType, textBoxEta, textBoxLimit);
+			SetNeuralNetwork();
+			_architecture = _ann.GetArchitecture();
+			NeuralNetwork.FillTrainChoices(errorChart, layoutArchitexture, comboBoxType, textBoxEta, textBoxLimit, _ann);
+			SetTexts();
+		}
+
+		private void LayerNumber_Changed(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox t)) return;
+
+			var splits = t.Name.Split('_');
+			int.TryParse(splits[1], out int whichLayer);
+			int.TryParse(t.Text, out int howMany);
+			howMany = MathHandler.Clamp(howMany, NeuralNetwork.NeuronMin, NeuralNetwork.NeuronMax);
+			t.Text = howMany.ToString();
+			_ann.UpdateLayer(whichLayer, howMany);
+		}
+
+		private void ButtonAddLayer_Click(object sender, EventArgs e)
+		{
+			_ann.AddLayer();
+			NeuralNetwork.FillPanel(layoutArchitexture, _ann);
+		}
+
+		private void OnValueChanged_Type(object sender, EventArgs e)
+		{
+			_ann?.OnValueChanged_Type(sender, e);
+		}
+
+		private void Eta_Changed(object sender, KeyEventArgs e)
+		{
+			if (!(sender is TextBox t)) return;
+
+			switch (e.KeyCode)
+			{
+				case Keys.Enter:
+					double.TryParse(t.Text, out double eta);
+					eta = MathHandler.Clamp(eta, NeuralNetwork.EtaMin, NeuralNetwork.EtaMax);
+					t.Text = eta.ToString(CultureInfo.InvariantCulture);
+					_ann.ChangeEta(eta);
+					break;
+				case Keys.Escape:
+					t.Text = _ann.GetEta().ToString(CultureInfo.InvariantCulture);
+					break;
+			}
+		}
+
+		private void Iterations_Changed(object sender, KeyEventArgs e)
+		{
+			if (!(sender is TextBox t)) return;
+
+			switch(e.KeyCode)
+			{
+				case Keys.Enter:
+					int.TryParse(t.Text, out int iterations);
+					iterations = MathHandler.Clamp(iterations, NeuralNetwork.LimitMin, NeuralNetwork.LimitMax);
+					t.Text = iterations.ToString();
+					_ann.ChangeIterations(iterations);
+					break;
+				case Keys.Escape:
+					t.Text = _ann.GetIterations().ToString(CultureInfo.InvariantCulture);
+					break;
+			}
+
+			
 		}
 
 		private void Train_Click(object sender, EventArgs e)
 		{
 			Train.Visible = false;
 			GoToTest.Visible = true;
+			_ann.InitNetwork();
 		}
 
 		private void GoToTest_Click(object sender, EventArgs e)
@@ -284,12 +370,9 @@ namespace Backpropagation
 
 		private void Test_Click(object sender, EventArgs e)
 		{
-			// TODO ANN.Guess();
-			_drawer.ResetPoints();
-
-			// TODO Remove later
-			Random rand = new Random();
-			labelClass.Text = rand.Next(1, _params.Symbols + 1).ToString();
+			List<double> results = _ann.GetOutputs(_symbol.GetXrepresentors(), _symbol.GetYrepresentros());
+			int whichClass = NeuralNetwork.WhichClass(results) + 1;
+			labelClass.Text = whichClass.ToString();
 		}
 
 		private void ButtonTest_Click(object sender, EventArgs e)
@@ -297,6 +380,8 @@ namespace Backpropagation
 			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
 			UiHandler.PanelVisible(panelTest, _panels);
 		}
+
+		
 		// ______________________________________________________________
 	}
 }

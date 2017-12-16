@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Backpropagation
 {
@@ -488,6 +487,7 @@ namespace Backpropagation
 			this.textBoxLimit.Name = "textBoxLimit";
 			this.textBoxLimit.Size = new System.Drawing.Size(208, 27);
 			this.textBoxLimit.TabIndex = 12;
+			this.textBoxLimit.KeyDown += new KeyEventHandler(this.Iterations_Changed);
 			// 
 			// textBoxEta
 			// 
@@ -495,14 +495,17 @@ namespace Backpropagation
 			this.textBoxEta.Name = "textBoxEta";
 			this.textBoxEta.Size = new System.Drawing.Size(208, 27);
 			this.textBoxEta.TabIndex = 11;
+			this.textBoxEta.KeyDown += new KeyEventHandler(this.Eta_Changed);
 			// 
 			// comboBoxType
 			// 
+			this.comboBoxType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxType.FormattingEnabled = true;
 			this.comboBoxType.Location = new System.Drawing.Point(215, 325);
 			this.comboBoxType.Name = "comboBoxType";
 			this.comboBoxType.Size = new System.Drawing.Size(208, 29);
 			this.comboBoxType.TabIndex = 10;
+			this.comboBoxType.SelectedValueChanged += new System.EventHandler(this.OnValueChanged_Type);
 			// 
 			// labelLimit
 			// 
@@ -540,6 +543,7 @@ namespace Backpropagation
 			this.buttonAddLayer.TabIndex = 6;
 			this.buttonAddLayer.Text = "Add layer";
 			this.buttonAddLayer.UseVisualStyleBackColor = true;
+			this.buttonAddLayer.Click += new System.EventHandler(this.ButtonAddLayer_Click);
 			// 
 			// layoutArchitexture
 			// 
@@ -655,9 +659,9 @@ namespace Backpropagation
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(44)))), ((int)(((byte)(51)))));
 			this.ClientSize = new System.Drawing.Size(800, 600);
+			this.Controls.Add(this.panelTrain);
 			this.Controls.Add(this.panelParam);
 			this.Controls.Add(this.panelTestSet);
-			this.Controls.Add(this.panelTrain);
 			this.Controls.Add(this.panelTest);
 			this.Controls.Add(this.panelSlider);
 			this.Controls.Add(this.titleBar);

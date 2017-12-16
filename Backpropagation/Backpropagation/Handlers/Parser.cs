@@ -63,7 +63,7 @@ namespace Backpropagation.Handlers
 				result[i + displacement] = Sample + " [";
 				for (var j = 0; j < input.NumSymbolSamples; j++)
 				{
-					result[i + displacement] += "'" + input.Symbols[i].XPositions[j];
+					result[i + displacement] += "'" + input.Symbols[i].XPositions[j].ToString("G17");
 					if (j != input.NumSymbolSamples - 1)
 						result[i + displacement] += "',";
 					else
@@ -71,7 +71,7 @@ namespace Backpropagation.Handlers
 				}
 				for (var j = 0; j < input.NumSymbolSamples; j++)
 				{
-					result[i + displacement] += "'" + input.Symbols[i].YPositions[j];
+					result[i + displacement] += "'" + input.Symbols[i].YPositions[j].ToString("G17");
 					if (j != input.NumSymbolSamples - 1)
 						result[i + displacement] += "',";
 					else

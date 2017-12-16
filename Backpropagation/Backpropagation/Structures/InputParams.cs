@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
 using Backpropagation.Handlers;
 
 namespace Backpropagation.Structures
@@ -26,14 +24,6 @@ namespace Backpropagation.Structures
 		public const int NumSymbolSamplesDefault = 20;
 		public const int NumSymbolSamplesMax = 50;
 		public const int NumSymbolSamplesDelta = 5;
-
-		public const double EtaMin = 0.001;
-		public const double EtaDefault = 0.01;
-		public const double EtaMax = 1;
-
-		public const int LimitMin = 100;
-		public const int LimitDefault = 10000;
-		public const int LimitMax = 1000000;
 
 		public InputParams()
 		{
@@ -69,16 +59,6 @@ namespace Backpropagation.Structures
 			symbolBox.SelectedItem = NumSymbolDefault;
 			samplesBox.SelectedItem = NumSamplesDefault;
 			symbolSamplesBox.SelectedItem = NumSymbolSamplesDefault;
-		}
-
-		public static void FillTrainChoices(Chart graph, Panel architecturePanel, ComboBox backpropagationType, TextBox eta, TextBox limit)
-		{
-			backpropagationType.Items.Add("Batch");
-			backpropagationType.Items.Add("Online");
-			backpropagationType.Items.Add("Mini-batch");
-			backpropagationType.SelectedItem = backpropagationType.Items[0];
-			eta.Text = EtaDefault.ToString(CultureInfo.InvariantCulture);
-			limit.Text = LimitDefault.ToString(CultureInfo.InvariantCulture);
 		}
 
 		private static void FillComboBox(ComboBox comboBox, int minValue, int maxValue, int delta = 1)

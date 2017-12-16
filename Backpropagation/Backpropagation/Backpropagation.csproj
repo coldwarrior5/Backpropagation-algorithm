@@ -45,6 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ANN\CriterionFunction.cs" />
+    <Compile Include="ANN\Interfaces\IActivationFunction.cs" />
+    <Compile Include="ANN\Interfaces\INeuron.cs" />
+    <Compile Include="ANN\NeuralNetwork.cs" />
+    <Compile Include="ANN\Neuron.cs" />
+    <Compile Include="ANN\ActivationFunctions.cs" />
+    <Compile Include="ANN\NeuronLayer.cs" />
     <Compile Include="Handlers\Drawer.cs" />
     <Compile Include="Handlers\ErrorHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
@@ -52,6 +59,7 @@
     <Compile Include="Handlers\Parser.cs" />
     <Compile Include="Handlers\SymbolHandler.cs" />
     <Compile Include="Handlers\UIHandler.cs" />
+    <Compile Include="Structures\BackpropagationType.cs" />
     <Compile Include="Structures\InputParams.cs" />
     <Compile Include="Interfaces\IFileHandler.cs" />
     <Compile Include="Interfaces\IParser.cs" />
