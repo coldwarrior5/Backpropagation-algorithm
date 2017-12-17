@@ -57,11 +57,9 @@ namespace Backpropagation.ANN
 			_function = function;
 			_outputLayerFunction = outputLayerFunction;
 			_perSymbolError = new double[_instance.NumSymbols];
-			// Evaluate();
+			
 			for (int i = 0; i < _instance.NumSymbols; i++)
-			{
-				_perSymbolError[i] = 1;
-			}
+				_perSymbolError[i] = 0;
 		}
 
 		public void AddLayer()
@@ -103,7 +101,7 @@ namespace Backpropagation.ANN
 			return _maxIteration;
 		}
 
-		public void InitNetwork()
+		private void InitNetwork()
 		{
 			_layers = new List<NeuronLayer>();
 			
@@ -113,6 +111,12 @@ namespace Backpropagation.ANN
 				IActivationFunction currentFunction = i == NumberOfLayers - 1 ? _outputLayerFunction : _function;
 				_layers.Add(new NeuronLayer(_architecture[i], numberOfNeuronsInFormerLayer, currentFunction));
 			}
+			Evaluate();
+		}
+
+		public void Train()
+		{
+			InitNetwork();
 		}
 
 		public void ResetNetwork()
@@ -160,7 +164,7 @@ namespace Backpropagation.ANN
 				expectedOutputs[i] = _instance.Symbols[i].Class;
 
 			}
-			CriterionFunction.Evaluate(givenOutputs, expectedOutputs);
+			_perSymbolError = CriterionFunction.EvaluatePerSymbol(givenOutputs, expectedOutputs);
 		}
 
 		public bool IsEquals(List<int> architecture, IActivationFunction function = null, IActivationFunction outputLayerFunction = null)

@@ -398,7 +398,8 @@ namespace Backpropagation
 		{
 			Train.Visible = false;
 			GoToTest.Visible = true;
-			_ann.InitNetwork();
+			_ann.Train();
+			NeuralNetwork.FillChart(errorChart, _ann);
 		}
 
 		private void GoToTest_Click(object sender, EventArgs e)
