@@ -276,7 +276,7 @@ namespace Backpropagation
 			if (!(sender is Panel panel)) return;
 			if (!panel.Visible) return;
 			SetNeuralNetwork();
-			NeuralNetwork.FillTrainChoices(errorChart, labelTotalError, layoutArchitexture, comboBoxType, textBoxEta, textBoxLimit, _ann);
+			NeuralNetwork.FillTrainChoices(errorChart, labelTotalError, layoutArchitexture, comboBoxType, textBoxEta, textBoxDesiredError, _ann);
 			SetTexts();
 		}
 
@@ -368,32 +368,32 @@ namespace Backpropagation
 			_ann.ChangeEta(eta);
 		}
 
-		private void Iterations_Changed(object sender, KeyEventArgs e)
+		private void DesiredError_Changed(object sender, KeyEventArgs e)
 		{
 			if (!(sender is TextBox t)) return;
 
 			switch(e.KeyCode)
 			{
 				case Keys.Enter:
-					int.TryParse(t.Text, out int iterations);
-					iterations = MathHandler.Clamp(iterations, NeuralNetwork.LimitMin, NeuralNetwork.LimitMax);
-					t.Text = iterations.ToString();
-					_ann.ChangeIterations(iterations);
+					double.TryParse(t.Text, out double desiredError);
+					desiredError = MathHandler.Clamp(desiredError, NeuralNetwork.DesiredErrorMin, NeuralNetwork.DesiredErrorMax);
+					t.Text = desiredError.ToString(CultureInfo.InvariantCulture);
+					_ann.ChangeDesiredError(desiredError);
 					break;
 				case Keys.Escape:
-					t.Text = _ann.GetIterations().ToString(CultureInfo.InvariantCulture);
+					t.Text = _ann.GetDesiredError().ToString(CultureInfo.InvariantCulture);
 					break;
 			}
 		}
 
-		private void Iterations_Left(object sender, EventArgs e)
+		private void DesiredError_Left(object sender, EventArgs e)
 		{
 			if (!(sender is TextBox t)) return;
-			
-			int.TryParse(t.Text, out int iterations);
-			iterations = MathHandler.Clamp(iterations, NeuralNetwork.LimitMin, NeuralNetwork.LimitMax);
-			t.Text = iterations.ToString();
-			_ann.ChangeIterations(iterations);
+
+			double.TryParse(t.Text, out double desiredError);
+			desiredError = MathHandler.Clamp(desiredError, NeuralNetwork.DesiredErrorMin, NeuralNetwork.DesiredErrorMax);
+			t.Text = desiredError.ToString(CultureInfo.InvariantCulture);
+			_ann.ChangeDesiredError(desiredError);
 		}
 
 		private void Train_Click(object sender, EventArgs e)

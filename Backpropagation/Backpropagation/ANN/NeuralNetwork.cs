@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Backpropagation.ANN.Interfaces;
+using Backpropagation.Handlers;
 using Backpropagation.Structures;
 using BackpropagationHandler = Backpropagation.Structures.Backpropagation;
 
@@ -20,17 +21,20 @@ namespace Backpropagation.ANN
 		private List<NeuronLayer> _layers;
 		private BackpropagationType _bacpropagationType;
 		private double _eta;
-		private int _maxIteration;
+		private double _desiredError;
 		private double[] _perSymbolError;
+		public double TotalError { get; private set; }
 		private Instance _instance;
 
 		public const double EtaMin = 0.001;
 		public const double EtaDefault = 0.01;
 		public const double EtaMax = 1;
 
-		public const int LimitMin = 100;
-		public const int LimitDefault = 10000;
-		public const int LimitMax = 1000000;
+		public const double DesiredErrorMin = 0;
+		public const double DesiredErrorDefault = 0.01;
+		public const double DesiredErrorMax = 5;
+
+		public const int IterationLimit = 10000;
 
 		public const int NeuronMin = 1;
 		private readonly int _neuronDefault;
@@ -45,8 +49,8 @@ namespace Backpropagation.ANN
 			int inputSize = instance.NumSymbolSamples * 2;
 			int outputSize = instance.NumSymbols;
 			_neuronDefault = outputSize;
+			_desiredError = DesiredErrorDefault;
 			_eta = EtaDefault;
-			_maxIteration = LimitDefault;
 			List<int> architecture = new List<int> {inputSize, _neuronDefault, outputSize};
 			InitNeuralNetwork(architecture, function, outputLayerFunction);
 		}
@@ -60,7 +64,8 @@ namespace Backpropagation.ANN
 			_function = function;
 			_outputLayerFunction = outputLayerFunction;
 			_perSymbolError = new double[_instance.NumSymbols];
-			
+
+			TotalError = 0;
 			for (int i = 0; i < _instance.NumSymbols; i++)
 				_perSymbolError[i] = 0;
 		}
@@ -94,14 +99,14 @@ namespace Backpropagation.ANN
 			return _eta;
 		}
 
-		public void ChangeIterations(int iterations)
+		public void ChangeDesiredError(double desiredError)
 		{
-			_maxIteration = iterations;
+			_desiredError = desiredError;
 		}
 
-		public int GetIterations()
+		public double GetDesiredError()
 		{
-			return _maxIteration;
+			return _desiredError;
 		}
 
 		private void InitNetwork()
@@ -120,6 +125,55 @@ namespace Backpropagation.ANN
 		public void Train()
 		{
 			InitNetwork();
+			int iter = 0;
+			List<List<Symbol>> batches = FormBatches();
+			while (TotalError > _desiredError && iter++ < IterationLimit)
+			{
+				
+			}
+		}
+
+		private List<List<Symbol>> FormBatches()
+		{
+			List<List<Symbol>> batches = null;
+			switch (_bacpropagationType)
+			{
+				case BackpropagationType.Batch:
+					batches = new List<List<Symbol>>
+					{
+						_instance.Symbols.ToList()
+					};
+					break;
+				case BackpropagationType.MiniBatch:
+					batches = new List<List<Symbol>>();
+					MathHandler.FindDivisor(_instance.NumSamples, out int numBatches, out int perBatchElements);
+					int[] elemCounter = new int[_instance.NumSymbols];
+					int[] currentBatch = new int[_instance.NumSymbols];
+					for (int i = 0; i < _instance.NumSymbols; i++)
+					{
+						elemCounter[i] = perBatchElements;
+						currentBatch[i] = 0;
+					}
+					for (int i = 0; i <numBatches; i++)
+						batches.Add(new List<Symbol>());
+					
+					foreach (Symbol t in _instance.Symbols)
+					{
+						int whichClass = WhichClass(t.Class);
+						batches[currentBatch[whichClass]].Add(t);
+						elemCounter[whichClass]--;
+						if (elemCounter[whichClass] != 0) continue;
+						elemCounter[whichClass] = perBatchElements;
+						currentBatch[whichClass]++;
+					}
+					break;
+				case BackpropagationType.Online:
+					batches = new List<List<Symbol>>();
+					foreach (Symbol t in _instance.Symbols)
+						batches.Add(new List<Symbol> {t});
+					break;
+			}
+			return batches;
 		}
 
 		public void ResetNetwork()
@@ -158,6 +212,7 @@ namespace Backpropagation.ANN
 
 		public void Evaluate()
 		{
+			TotalError = 0;
 			double[][] givenOutputs = new double[_instance.Symbols.Length][];
 			int[][] expectedOutputs = new int[_instance.Symbols.Length][];
 			
@@ -167,7 +222,12 @@ namespace Backpropagation.ANN
 				expectedOutputs[i] = _instance.Symbols[i].Class;
 
 			}
+
 			_perSymbolError = CriterionFunction.EvaluatePerSymbol(givenOutputs, expectedOutputs);
+			for (int i = 0; i < _instance.NumSymbols; i++)
+			{
+				TotalError += _perSymbolError[i];
+			}
 		}
 
 		public void OnValueChanged_Type(object sender, EventArgs e)
@@ -200,16 +260,13 @@ namespace Backpropagation.ANN
 			NumberOfLayers = _architecture.Count;
 		}
 
-		public static void FillTrainChoices(Chart graph, Label totalError, TableLayoutPanel layoutArchitecture, ComboBox backpropagationType, TextBox eta, TextBox limit, NeuralNetwork ann)
+		public static void FillTrainChoices(Chart graph, Label totalError, TableLayoutPanel layoutArchitecture, ComboBox backpropagationType, TextBox eta, TextBox desiredError, NeuralNetwork ann)
 		{
 			FillChart(graph, totalError, ann);
 			FillPanel(layoutArchitecture, ann);
-			backpropagationType.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Batch));
-			backpropagationType.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Online));
-			backpropagationType.Items.Add(BackpropagationHandler.ToString(BackpropagationType.MiniBatch));
-			backpropagationType.SelectedItem = backpropagationType.Items[0];
+			FillTypeChoices(backpropagationType);
 			eta.Text = EtaDefault.ToString(CultureInfo.InvariantCulture);
-			limit.Text = LimitDefault.ToString(CultureInfo.InvariantCulture);
+			desiredError.Text = DesiredErrorDefault.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public static void FillChart(Chart graph, Label totalError, NeuralNetwork ann)
@@ -217,14 +274,12 @@ namespace Backpropagation.ANN
 			string name = "SymbolError";
 			graph.Series[name].Points.Clear();
 			graph.ChartAreas[0].AxisY.Maximum = 1;
-			double sum = 0;
 
 			for (int i = 0; i < ann._instance.NumSymbols; i++)
 			{
 				graph.Series[name].Points.AddXY(i + 1, ann._perSymbolError[i]);
-				sum += ann._perSymbolError[i];
 			}
-			totalError.Text = sum.ToString(CultureInfo.InvariantCulture);
+			totalError.Text = ann.TotalError.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public static void FillPanel(TableLayoutPanel panel, NeuralNetwork ann)
@@ -279,6 +334,15 @@ namespace Backpropagation.ANN
 			panel.Controls.Add(output);
 		}
 
+		public static void FillTypeChoices(ComboBox box)
+		{
+			box.Items.Clear();
+			box.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Batch));
+			box.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Online));
+			box.Items.Add(BackpropagationHandler.ToString(BackpropagationType.MiniBatch));
+			box.SelectedItem = box.Items[0];
+		}
+
 		public static int WhichClass(double[] solution)
 		{
 			int whichClass = 0;
@@ -288,6 +352,18 @@ namespace Backpropagation.ANN
 				if (!(solution[i] > max)) continue;
 				max = solution[i];
 				whichClass = i;
+			}
+			return whichClass;
+		}
+
+		public static int WhichClass(int[] classes)
+		{
+			int whichClass = -1;
+			for (int i = 0; i < classes.Length; i++)
+			{
+				if (classes[i] != 1) continue;
+				whichClass = i;
+				break;
 			}
 			return whichClass;
 		}

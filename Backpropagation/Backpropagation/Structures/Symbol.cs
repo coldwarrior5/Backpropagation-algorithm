@@ -31,5 +31,15 @@ namespace Backpropagation.Structures
 				Class[i] = classes[i];
 			}
 		}
+
+		public Symbol(double[] xPositions, double[] yPositions, int[] classes)
+		{
+			if (xPositions.Length != yPositions.Length)
+				throw new Exception("Both list have to have the same number of elements.");
+			XPositions = xPositions;
+			YPositions = yPositions;
+			Class = classes;
+		}
+
 	}
 }

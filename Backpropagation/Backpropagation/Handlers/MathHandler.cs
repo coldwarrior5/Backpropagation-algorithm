@@ -36,5 +36,25 @@ namespace Backpropagation.Handlers
 		{
 			return value < min ? min : value > max ? max : value;
 		}
+
+		public static void FindDivisor(int number, out int numBatches, out int perBatchElements)
+		{
+			int[] divisors = {2, 3, 5, 7, 11, 13};
+			numBatches = -1;
+			perBatchElements = -1;
+
+			foreach (int divisor in divisors)
+			{
+				numBatches = (int) Math.DivRem(number, divisor, out long remainder);
+				if (remainder != 0)
+				{
+					numBatches = number;
+					perBatchElements = 1;
+					continue;
+				}
+				perBatchElements = divisor;
+				break;
+			}
+		}
 	}
 }

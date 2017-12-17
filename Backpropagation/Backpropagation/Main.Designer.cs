@@ -31,9 +31,9 @@ namespace Backpropagation
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-			System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
+			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+			System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
 			this.progressionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.panelIcon = new System.Windows.Forms.Panel();
 			this.buttonParams = new System.Windows.Forms.Button();
@@ -66,12 +66,14 @@ namespace Backpropagation
 			this.separator = new System.Windows.Forms.Label();
 			this.SetParameters = new System.Windows.Forms.Button();
 			this.panelTrain = new System.Windows.Forms.Panel();
+			this.labelTotalError = new System.Windows.Forms.Label();
+			this.labelTotalErrorStatic = new System.Windows.Forms.Label();
 			this.buttonRemoveLayer = new System.Windows.Forms.Button();
 			this.layoutArchitexture = new System.Windows.Forms.TableLayoutPanel();
-			this.textBoxLimit = new System.Windows.Forms.TextBox();
+			this.textBoxDesiredError = new System.Windows.Forms.TextBox();
 			this.textBoxEta = new System.Windows.Forms.TextBox();
 			this.comboBoxType = new System.Windows.Forms.ComboBox();
-			this.labelLimit = new System.Windows.Forms.Label();
+			this.labelDesiredError = new System.Windows.Forms.Label();
 			this.labelEta = new System.Windows.Forms.Label();
 			this.labelType = new System.Windows.Forms.Label();
 			this.buttonAddLayer = new System.Windows.Forms.Button();
@@ -84,8 +86,6 @@ namespace Backpropagation
 			this.labelClassStatic = new System.Windows.Forms.Label();
 			this.drawingBoardTest = new System.Windows.Forms.PictureBox();
 			this.Test = new System.Windows.Forms.Button();
-			this.labelTotalErrorStatic = new System.Windows.Forms.Label();
-			this.labelTotalError = new System.Windows.Forms.Label();
 			this.progressionPanel.SuspendLayout();
 			this.titleBar.SuspendLayout();
 			this.panelTestSet.SuspendLayout();
@@ -469,10 +469,10 @@ namespace Backpropagation
 			this.panelTrain.Controls.Add(this.labelTotalErrorStatic);
 			this.panelTrain.Controls.Add(this.buttonRemoveLayer);
 			this.panelTrain.Controls.Add(this.layoutArchitexture);
-			this.panelTrain.Controls.Add(this.textBoxLimit);
+			this.panelTrain.Controls.Add(this.textBoxDesiredError);
 			this.panelTrain.Controls.Add(this.textBoxEta);
 			this.panelTrain.Controls.Add(this.comboBoxType);
-			this.panelTrain.Controls.Add(this.labelLimit);
+			this.panelTrain.Controls.Add(this.labelDesiredError);
 			this.panelTrain.Controls.Add(this.labelEta);
 			this.panelTrain.Controls.Add(this.labelType);
 			this.panelTrain.Controls.Add(this.buttonAddLayer);
@@ -486,6 +486,23 @@ namespace Backpropagation
 			this.panelTrain.TabIndex = 0;
 			this.panelTrain.Visible = false;
 			this.panelTrain.VisibleChanged += new System.EventHandler(this.TrainPanel_Visible);
+			// 
+			// labelTotalError
+			// 
+			this.labelTotalError.AutoSize = true;
+			this.labelTotalError.Location = new System.Drawing.Point(319, 200);
+			this.labelTotalError.Name = "labelTotalError";
+			this.labelTotalError.Size = new System.Drawing.Size(0, 21);
+			this.labelTotalError.TabIndex = 16;
+			// 
+			// labelTotalErrorStatic
+			// 
+			this.labelTotalErrorStatic.AutoSize = true;
+			this.labelTotalErrorStatic.Location = new System.Drawing.Point(220, 200);
+			this.labelTotalErrorStatic.Name = "labelTotalErrorStatic";
+			this.labelTotalErrorStatic.Size = new System.Drawing.Size(92, 21);
+			this.labelTotalErrorStatic.TabIndex = 15;
+			this.labelTotalErrorStatic.Text = "Total error:";
 			// 
 			// buttonRemoveLayer
 			// 
@@ -512,14 +529,14 @@ namespace Backpropagation
 			this.layoutArchitexture.Size = new System.Drawing.Size(456, 29);
 			this.layoutArchitexture.TabIndex = 13;
 			// 
-			// textBoxLimit
+			// textBoxDesiredError
 			// 
-			this.textBoxLimit.Location = new System.Drawing.Point(215, 399);
-			this.textBoxLimit.Name = "textBoxLimit";
-			this.textBoxLimit.Size = new System.Drawing.Size(208, 27);
-			this.textBoxLimit.TabIndex = 12;
-			this.textBoxLimit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Iterations_Changed);
-			this.textBoxLimit.Leave += new System.EventHandler(this.Iterations_Left);
+			this.textBoxDesiredError.Location = new System.Drawing.Point(215, 399);
+			this.textBoxDesiredError.Name = "textBoxDesiredError";
+			this.textBoxDesiredError.Size = new System.Drawing.Size(208, 27);
+			this.textBoxDesiredError.TabIndex = 12;
+			this.textBoxDesiredError.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DesiredError_Changed);
+			this.textBoxDesiredError.Leave += new System.EventHandler(this.DesiredError_Left);
 			// 
 			// textBoxEta
 			// 
@@ -540,14 +557,14 @@ namespace Backpropagation
 			this.comboBoxType.TabIndex = 10;
 			this.comboBoxType.SelectedValueChanged += new System.EventHandler(this.OnValueChanged_Type);
 			// 
-			// labelLimit
+			// labelDesiredError
 			// 
-			this.labelLimit.AutoSize = true;
-			this.labelLimit.Location = new System.Drawing.Point(10, 405);
-			this.labelLimit.Name = "labelLimit";
-			this.labelLimit.Size = new System.Drawing.Size(117, 21);
-			this.labelLimit.TabIndex = 9;
-			this.labelLimit.Text = "Iteration limit:";
+			this.labelDesiredError.AutoSize = true;
+			this.labelDesiredError.Location = new System.Drawing.Point(10, 405);
+			this.labelDesiredError.Name = "labelDesiredError";
+			this.labelDesiredError.Size = new System.Drawing.Size(110, 21);
+			this.labelDesiredError.TabIndex = 9;
+			this.labelDesiredError.Text = "Desired error:";
 			// 
 			// labelEta
 			// 
@@ -589,21 +606,21 @@ namespace Backpropagation
 			// 
 			// errorChart
 			// 
-			chartArea3.Name = "ChartArea1";
-			this.errorChart.ChartAreas.Add(chartArea3);
+			chartArea2.Name = "ChartArea1";
+			this.errorChart.ChartAreas.Add(chartArea2);
 			this.errorChart.Location = new System.Drawing.Point(114, 0);
 			this.errorChart.Name = "errorChart";
 			this.errorChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Pastel;
-			series3.ChartArea = "ChartArea1";
-			series3.Name = "SymbolError";
-			this.errorChart.Series.Add(series3);
+			series2.ChartArea = "ChartArea1";
+			series2.Name = "SymbolError";
+			this.errorChart.Series.Add(series2);
 			this.errorChart.Size = new System.Drawing.Size(411, 194);
 			this.errorChart.TabIndex = 3;
 			this.errorChart.Text = "Per character error";
-			title3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-			title3.Name = "Title1";
-			title3.Text = "Per character error";
-			this.errorChart.Titles.Add(title3);
+			title2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+			title2.Name = "Title1";
+			title2.Text = "Per character error";
+			this.errorChart.Titles.Add(title2);
 			// 
 			// Train
 			// 
@@ -681,23 +698,6 @@ namespace Backpropagation
 			this.Test.Text = "Test character";
 			this.Test.UseVisualStyleBackColor = true;
 			this.Test.Click += new System.EventHandler(this.Test_Click);
-			// 
-			// labelTotalErrorStatic
-			// 
-			this.labelTotalErrorStatic.AutoSize = true;
-			this.labelTotalErrorStatic.Location = new System.Drawing.Point(220, 200);
-			this.labelTotalErrorStatic.Name = "labelTotalErrorStatic";
-			this.labelTotalErrorStatic.Size = new System.Drawing.Size(92, 21);
-			this.labelTotalErrorStatic.TabIndex = 15;
-			this.labelTotalErrorStatic.Text = "Total error:";
-			// 
-			// labelTotalError
-			// 
-			this.labelTotalError.AutoSize = true;
-			this.labelTotalError.Location = new System.Drawing.Point(319, 200);
-			this.labelTotalError.Name = "labelTotalError";
-			this.labelTotalError.Size = new System.Drawing.Size(0, 21);
-			this.labelTotalError.TabIndex = 16;
 			// 
 			// Main
 			// 
@@ -778,10 +778,10 @@ namespace Backpropagation
 		private Label labelClass;
 		private Label labelClassStatic;
 		private System.Windows.Forms.DataVisualization.Charting.Chart errorChart;
-		private TextBox textBoxLimit;
+		private TextBox textBoxDesiredError;
 		private TextBox textBoxEta;
 		private ComboBox comboBoxType;
-		private Label labelLimit;
+		private Label labelDesiredError;
 		private Label labelEta;
 		private Label labelType;
 		private Button buttonAddLayer;
