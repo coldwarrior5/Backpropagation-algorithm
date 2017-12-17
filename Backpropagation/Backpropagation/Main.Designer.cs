@@ -31,9 +31,9 @@ namespace Backpropagation
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-			System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+			System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
 			this.progressionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.panelIcon = new System.Windows.Forms.Panel();
 			this.buttonParams = new System.Windows.Forms.Button();
@@ -84,6 +84,8 @@ namespace Backpropagation
 			this.labelClassStatic = new System.Windows.Forms.Label();
 			this.drawingBoardTest = new System.Windows.Forms.PictureBox();
 			this.Test = new System.Windows.Forms.Button();
+			this.labelTotalErrorStatic = new System.Windows.Forms.Label();
+			this.labelTotalError = new System.Windows.Forms.Label();
 			this.progressionPanel.SuspendLayout();
 			this.titleBar.SuspendLayout();
 			this.panelTestSet.SuspendLayout();
@@ -463,6 +465,8 @@ namespace Backpropagation
 			// 
 			// panelTrain
 			// 
+			this.panelTrain.Controls.Add(this.labelTotalError);
+			this.panelTrain.Controls.Add(this.labelTotalErrorStatic);
 			this.panelTrain.Controls.Add(this.buttonRemoveLayer);
 			this.panelTrain.Controls.Add(this.layoutArchitexture);
 			this.panelTrain.Controls.Add(this.textBoxLimit);
@@ -487,9 +491,9 @@ namespace Backpropagation
 			// 
 			this.buttonRemoveLayer.Enabled = false;
 			this.buttonRemoveLayer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonRemoveLayer.Location = new System.Drawing.Point(114, 257);
+			this.buttonRemoveLayer.Location = new System.Drawing.Point(157, 276);
 			this.buttonRemoveLayer.Name = "buttonRemoveLayer";
-			this.buttonRemoveLayer.Size = new System.Drawing.Size(208, 48);
+			this.buttonRemoveLayer.Size = new System.Drawing.Size(155, 29);
 			this.buttonRemoveLayer.TabIndex = 14;
 			this.buttonRemoveLayer.Text = "Remove layer";
 			this.buttonRemoveLayer.UseVisualStyleBackColor = true;
@@ -500,12 +504,12 @@ namespace Backpropagation
 			this.layoutArchitexture.ColumnCount = 2;
 			this.layoutArchitexture.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.layoutArchitexture.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.layoutArchitexture.Location = new System.Drawing.Point(167, 222);
+			this.layoutArchitexture.Location = new System.Drawing.Point(157, 236);
 			this.layoutArchitexture.Name = "layoutArchitexture";
 			this.layoutArchitexture.RowCount = 2;
 			this.layoutArchitexture.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.layoutArchitexture.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.layoutArchitexture.Size = new System.Drawing.Size(446, 29);
+			this.layoutArchitexture.Size = new System.Drawing.Size(456, 29);
 			this.layoutArchitexture.TabIndex = 13;
 			// 
 			// textBoxLimit
@@ -566,9 +570,9 @@ namespace Backpropagation
 			// buttonAddLayer
 			// 
 			this.buttonAddLayer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonAddLayer.Location = new System.Drawing.Point(347, 257);
+			this.buttonAddLayer.Location = new System.Drawing.Point(328, 276);
 			this.buttonAddLayer.Name = "buttonAddLayer";
-			this.buttonAddLayer.Size = new System.Drawing.Size(208, 48);
+			this.buttonAddLayer.Size = new System.Drawing.Size(155, 29);
 			this.buttonAddLayer.TabIndex = 6;
 			this.buttonAddLayer.Text = "Add layer";
 			this.buttonAddLayer.UseVisualStyleBackColor = true;
@@ -577,7 +581,7 @@ namespace Backpropagation
 			// labelArchitecture
 			// 
 			this.labelArchitecture.AutoSize = true;
-			this.labelArchitecture.Location = new System.Drawing.Point(10, 230);
+			this.labelArchitecture.Location = new System.Drawing.Point(10, 244);
 			this.labelArchitecture.Name = "labelArchitecture";
 			this.labelArchitecture.Size = new System.Drawing.Size(151, 21);
 			this.labelArchitecture.TabIndex = 4;
@@ -585,21 +589,21 @@ namespace Backpropagation
 			// 
 			// errorChart
 			// 
-			chartArea1.Name = "ChartArea1";
-			this.errorChart.ChartAreas.Add(chartArea1);
-			this.errorChart.Location = new System.Drawing.Point(125, 8);
+			chartArea3.Name = "ChartArea1";
+			this.errorChart.ChartAreas.Add(chartArea3);
+			this.errorChart.Location = new System.Drawing.Point(114, 0);
 			this.errorChart.Name = "errorChart";
 			this.errorChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Pastel;
-			series1.ChartArea = "ChartArea1";
-			series1.Name = "SymbolError";
-			this.errorChart.Series.Add(series1);
-			this.errorChart.Size = new System.Drawing.Size(411, 208);
+			series3.ChartArea = "ChartArea1";
+			series3.Name = "SymbolError";
+			this.errorChart.Series.Add(series3);
+			this.errorChart.Size = new System.Drawing.Size(411, 194);
 			this.errorChart.TabIndex = 3;
 			this.errorChart.Text = "Per character error";
-			title1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-			title1.Name = "Title1";
-			title1.Text = "Per character error";
-			this.errorChart.Titles.Add(title1);
+			title3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+			title3.Name = "Title1";
+			title3.Text = "Per character error";
+			this.errorChart.Titles.Add(title3);
 			// 
 			// Train
 			// 
@@ -677,6 +681,23 @@ namespace Backpropagation
 			this.Test.Text = "Test character";
 			this.Test.UseVisualStyleBackColor = true;
 			this.Test.Click += new System.EventHandler(this.Test_Click);
+			// 
+			// labelTotalErrorStatic
+			// 
+			this.labelTotalErrorStatic.AutoSize = true;
+			this.labelTotalErrorStatic.Location = new System.Drawing.Point(220, 200);
+			this.labelTotalErrorStatic.Name = "labelTotalErrorStatic";
+			this.labelTotalErrorStatic.Size = new System.Drawing.Size(92, 21);
+			this.labelTotalErrorStatic.TabIndex = 15;
+			this.labelTotalErrorStatic.Text = "Total error:";
+			// 
+			// labelTotalError
+			// 
+			this.labelTotalError.AutoSize = true;
+			this.labelTotalError.Location = new System.Drawing.Point(319, 200);
+			this.labelTotalError.Name = "labelTotalError";
+			this.labelTotalError.Size = new System.Drawing.Size(0, 21);
+			this.labelTotalError.TabIndex = 16;
 			// 
 			// Main
 			// 
@@ -767,6 +788,8 @@ namespace Backpropagation
 		private Label labelArchitecture;
 		private TableLayoutPanel layoutArchitexture;
 		private Button buttonRemoveLayer;
+		private Label labelTotalError;
+		private Label labelTotalErrorStatic;
 	}
 }
 

@@ -36,6 +36,9 @@ namespace Backpropagation.ANN
 		private readonly int _neuronDefault;
 		public const int NeuronMax = 50;
 
+		public const int LayersMin = 3;
+		public const int LayersMax = 10;
+
 		public NeuralNetwork(Instance instance, IActivationFunction function = null, IActivationFunction outputLayerFunction = null)
 		{
 			_instance = instance;
@@ -50,7 +53,7 @@ namespace Backpropagation.ANN
 
 		private void InitNeuralNetwork(List<int> architecture, IActivationFunction function = null, IActivationFunction outputLayerFunction = null)
 		{
-			if (architecture.Count < 3)
+			if (architecture.Count < LayersMin)
 				throw new ArgumentException(@"Architecture must contain at least one hidden layer!", architecture.ToString());
 			NumberOfLayers = architecture.Count;
 			_architecture = architecture;
@@ -157,7 +160,7 @@ namespace Backpropagation.ANN
 		{
 			double[][] givenOutputs = new double[_instance.Symbols.Length][];
 			int[][] expectedOutputs = new int[_instance.Symbols.Length][];
-
+			
 			for (int i = 0; i < _instance.Symbols.Length; i++)
 			{
 				givenOutputs[i] = GetOutputs(_instance.Symbols[i].XPositions, _instance.Symbols[i].YPositions);
@@ -165,25 +168,6 @@ namespace Backpropagation.ANN
 
 			}
 			_perSymbolError = CriterionFunction.EvaluatePerSymbol(givenOutputs, expectedOutputs);
-		}
-
-		public bool IsEquals(List<int> architecture, IActivationFunction function = null, IActivationFunction outputLayerFunction = null)
-		{
-			if (NumberOfLayers != architecture.Count)
-				return false;
-
-			if (_function != function)
-				return false;
-
-			if (_outputLayerFunction != outputLayerFunction)
-				return false;
-
-			for (int i = 0; i < NumberOfLayers; i++)
-			{
-				if (_architecture[i] != architecture[i])
-					return false;
-			}
-			return true;
 		}
 
 		public void OnValueChanged_Type(object sender, EventArgs e)
@@ -194,9 +178,31 @@ namespace Backpropagation.ANN
 			}
 		}
 
-		public static void FillTrainChoices(Chart graph, TableLayoutPanel layoutArchitecture, ComboBox backpropagationType, TextBox eta, TextBox limit, NeuralNetwork ann)
+		public bool Consistent()
 		{
-			FillChart(graph, ann);
+			if (_layers.Count != _architecture.Count)
+				return false;
+			for (int i = 0; i < _layers.Count; i++)
+			{
+				if (_layers[i].NumberOfNeurons != _architecture[i])
+					return false;
+			}
+			return true;
+		}
+
+		public void FixArchitecture()
+		{
+			_architecture = new List<int>();
+			foreach (NeuronLayer t in _layers)
+			{
+				_architecture.Add(t.NumberOfNeurons);
+			}
+			NumberOfLayers = _architecture.Count;
+		}
+
+		public static void FillTrainChoices(Chart graph, Label totalError, TableLayoutPanel layoutArchitecture, ComboBox backpropagationType, TextBox eta, TextBox limit, NeuralNetwork ann)
+		{
+			FillChart(graph, totalError, ann);
 			FillPanel(layoutArchitecture, ann);
 			backpropagationType.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Batch));
 			backpropagationType.Items.Add(BackpropagationHandler.ToString(BackpropagationType.Online));
@@ -206,15 +212,19 @@ namespace Backpropagation.ANN
 			limit.Text = LimitDefault.ToString(CultureInfo.InvariantCulture);
 		}
 
-		public static void FillChart(Chart graph, NeuralNetwork ann)
+		public static void FillChart(Chart graph, Label totalError, NeuralNetwork ann)
 		{
 			string name = "SymbolError";
 			graph.Series[name].Points.Clear();
 			graph.ChartAreas[0].AxisY.Maximum = 1;
+			double sum = 0;
+
 			for (int i = 0; i < ann._instance.NumSymbols; i++)
 			{
 				graph.Series[name].Points.AddXY(i + 1, ann._perSymbolError[i]);
+				sum += ann._perSymbolError[i];
 			}
+			totalError.Text = sum.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public static void FillPanel(TableLayoutPanel panel, NeuralNetwork ann)

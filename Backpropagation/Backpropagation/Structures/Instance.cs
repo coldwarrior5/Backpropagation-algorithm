@@ -9,7 +9,7 @@ namespace Backpropagation.Structures
 		public int NumSymbols { get; }
 		public int NumSamples { get; }
 		public int NumSymbolSamples { get; }
-		public Symbol[] Symbols;
+		public readonly Symbol[] Symbols;
 
 		public Instance(int numSymbols, int numSamples, int numSymbolSamples)
 		{

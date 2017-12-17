@@ -20,8 +20,7 @@ namespace Backpropagation
 		private SymbolHandler _symbol;
 		private List<Panel> _panels;
 		private bool _mouseDown;
-
-		private List<int> _architecture;
+		
 		private NeuralNetwork _ann;
 
 		public Main()
@@ -58,7 +57,7 @@ namespace Backpropagation
 		{
 			if(_ann is null)
 				_ann = new NeuralNetwork(_instance);
-			else if(!_ann.IsEquals(_architecture))
+			else if(!_ann.Consistent())
 				_ann = new NeuralNetwork(_instance);
 		}
 
@@ -277,8 +276,7 @@ namespace Backpropagation
 			if (!(sender is Panel panel)) return;
 			if (!panel.Visible) return;
 			SetNeuralNetwork();
-			_architecture = _ann.GetArchitecture();
-			NeuralNetwork.FillTrainChoices(errorChart, layoutArchitexture, comboBoxType, textBoxEta, textBoxLimit, _ann);
+			NeuralNetwork.FillTrainChoices(errorChart, labelTotalError, layoutArchitexture, comboBoxType, textBoxEta, textBoxLimit, _ann);
 			SetTexts();
 		}
 
@@ -319,9 +317,11 @@ namespace Backpropagation
 
 		private void ButtonRemoveLayer_Click(object sender, EventArgs e)
 		{
+			buttonAddLayer.Enabled = true;
 			_ann.RemoveLayer();
 			NeuralNetwork.FillPanel(layoutArchitexture, _ann);
-			if (_architecture.Count == 3)
+			SetTexts();
+			if (_ann.GetArchitecture().Count == NeuralNetwork.LayersMin)
 				buttonRemoveLayer.Enabled = false;
 		}
 
@@ -331,6 +331,8 @@ namespace Backpropagation
 			_ann.AddLayer();
 			NeuralNetwork.FillPanel(layoutArchitexture, _ann);
 			SetTexts();
+			if (_ann.GetArchitecture().Count == NeuralNetwork.LayersMax)
+				buttonAddLayer.Enabled = false;
 		}
 
 		private void OnValueChanged_Type(object sender, EventArgs e)
@@ -399,13 +401,14 @@ namespace Backpropagation
 			Train.Visible = false;
 			GoToTest.Visible = true;
 			_ann.Train();
-			NeuralNetwork.FillChart(errorChart, _ann);
+			NeuralNetwork.FillChart(errorChart, labelTotalError, _ann);
 		}
 
 		private void GoToTest_Click(object sender, EventArgs e)
 		{
 			Train.Visible = true;
 			GoToTest.Visible = false;
+			_ann.FixArchitecture();
 			UiHandler.PanelVisible(panelTest, _panels);
 			buttonTest.Enabled = true;
 			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
@@ -415,6 +418,8 @@ namespace Backpropagation
 		{
 			_ann?.ResetNetwork();
 			_drawer?.ResetPoints();
+			Train.Visible = true;
+			GoToTest.Visible = false;
 			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);
 			buttonTest.Enabled = false;
 			UiHandler.PanelVisible(panelTrain, _panels);
