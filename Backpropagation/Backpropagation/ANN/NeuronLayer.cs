@@ -8,7 +8,7 @@ namespace Backpropagation.ANN
 	{
 		public int NumberOfNeurons { get; }
 		public int InputSize { get; }
-		private List<Neuron> _neurons;
+		private List<INeuron> _neurons;
 
 		public NeuronLayer(int numberOfNeurons, int numberOfNeuronsInPreviousLayer, IActivationFunction function = null)
 		{
@@ -19,10 +19,16 @@ namespace Backpropagation.ANN
 
 		private void InitNeurons(IActivationFunction function)
 		{
-			_neurons = new List<Neuron>();
+			_neurons = new List<INeuron>();
 			DetermineRightFunction(ref function);
 			for (int i = 0; i < NumberOfNeurons; i++)
 				_neurons.Add(new Neuron(InputSize, function));
+		}
+
+		public void ResetLayer()
+		{
+			for (var i = 0; i < NumberOfNeurons; i++)
+				_neurons[i].Reset();
 		}
 
 		private void DetermineRightFunction(ref IActivationFunction function)
@@ -33,17 +39,17 @@ namespace Backpropagation.ANN
 				function = new Adaline();
 		}
 
-		public List<double> GetOutputs(List<double> inputs)
+		public double[] GetOutputs(double[] inputs)
 		{
-			if(InputSize == 0 && inputs.Count != NumberOfNeurons)
+			if(InputSize == 0 && inputs.Length != NumberOfNeurons)
 				throw new ArgumentException(@"Input needs to contain the amount of elements that corresponds to input layer size!", inputs.ToString());
-			if(InputSize != 0 && inputs.Count != InputSize)
+			if(InputSize != 0 && inputs.Length != InputSize)
 				throw new ArgumentException(@"Input needs to contain the amount of elements that corresponds to former layer size!", inputs.ToString());
 
-			List<double> outputs = new List<double>();
+			double[] outputs = new double[NumberOfNeurons];
 			for (int i = 0; i < NumberOfNeurons; i++)
 			{
-				outputs.Add(InputSize == 0 ? _neurons[i].GetOutput(new List<double> {inputs[i]}) : _neurons[i].GetOutput(inputs));
+				outputs[i] = InputSize == 0 ? _neurons[i].GetOutput(new [] {inputs[i]}) : _neurons[i].GetOutput(inputs);
 			}
 			return outputs;
 		}

@@ -93,15 +93,17 @@ namespace Backpropagation.Handlers
 		private void ParseLine(string line, int position)
 		{
 			if (line.StartsWith(Comment) || line is EmptyLine)
+			{
+				Instance temp = new Instance(_numSymbols, _numSamples, _numSymbolSamples);
+				if (_instance is null || !_instance.Equals(temp))
+					_instance = new Instance(_numSymbols, _numSamples, _numSymbolSamples);
 				return;
+			}
+				
 			if (line.StartsWith(InstanceInfo))
 				ParseInstance(line);
 			else if (line.StartsWith(Sample))
-			{
-				if(_instance is null)
-					_instance = new Instance(_numSymbols, _numSamples, _numSymbolSamples);
 				ParseSample(line, position);
-			}
 			else
 				ErrorHandler.TerminateExecution(ErrorCode.ImproperLine, "Line " + position + " is not valid.");
 		}

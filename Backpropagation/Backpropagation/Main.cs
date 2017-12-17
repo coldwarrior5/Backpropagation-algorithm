@@ -166,6 +166,7 @@ namespace Backpropagation
 			_params.Samples = _instance.NumSamples;
 			_params.Symbols = _instance.NumSymbols;
 			_params.PerSymbolSamples = _instance.NumSymbolSamples;
+			_symbol = new SymbolHandler(_params.PerSymbolSamples);
 			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);
 			buttonTestSet.Enabled = true;
 			buttonTrain.Enabled = true;
@@ -174,6 +175,7 @@ namespace Backpropagation
 
 		private void ButtonParams_Click(object sender, EventArgs e)
 		{
+			_drawer?.ResetPoints();
 			UiHandler.SetSlider(panelSlider, buttonParams.Top, buttonParams.Height);
 			buttonTestSet.Enabled = false;
 			buttonTrain.Enabled = false;
@@ -214,6 +216,8 @@ namespace Backpropagation
 			_drawer.AddPoint(e.Location.X, e.Location.Y);
 			_symbol.ProcessSymbol();
 			_mouseDown = false;
+
+			Test.Enabled = true;
 		}
 
 		private void ClassButton_Click(object sender, EventArgs e)
@@ -257,6 +261,7 @@ namespace Backpropagation
 
 		private void ButtonTestSet_Click(object sender, EventArgs e)
 		{
+			_drawer?.ResetPoints();
 			UiHandler.SetSlider(panelSlider, buttonTestSet.Top, buttonTestSet.Height);
 			buttonTrain.Enabled = false;
 			buttonTest.Enabled = false;
@@ -312,8 +317,17 @@ namespace Backpropagation
 			_ann.UpdateLayer(whichLayer, howMany);
 		}
 
+		private void ButtonRemoveLayer_Click(object sender, EventArgs e)
+		{
+			_ann.RemoveLayer();
+			NeuralNetwork.FillPanel(layoutArchitexture, _ann);
+			if (_architecture.Count == 3)
+				buttonRemoveLayer.Enabled = false;
+		}
+
 		private void ButtonAddLayer_Click(object sender, EventArgs e)
 		{
+			buttonRemoveLayer.Enabled = true;
 			_ann.AddLayer();
 			NeuralNetwork.FillPanel(layoutArchitexture, _ann);
 			SetTexts();
@@ -398,6 +412,8 @@ namespace Backpropagation
 
 		private void ButtonTrain_Click(object sender, EventArgs e)
 		{
+			_ann?.ResetNetwork();
+			_drawer?.ResetPoints();
 			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);
 			buttonTest.Enabled = false;
 			UiHandler.PanelVisible(panelTrain, _panels);
@@ -410,24 +426,28 @@ namespace Backpropagation
 		private void TestPanel_Visible(object sender, EventArgs e)
 		{
 			if (!(sender is Panel panel)) return;
-			if (!panel.Visible) return;
+			if (!panel.Visible)
+			{
+				_drawer.ResetPoints();
+				return;
+			}
 			SetDrawer(drawingBoardTest);
+			labelClass.Text = "";
 		}
 
 		private void Test_Click(object sender, EventArgs e)
 		{
-			List<double> results = _ann.GetOutputs(_symbol.GetXrepresentors(), _symbol.GetYrepresentros());
+			double[] results = _ann.GetOutputs(_symbol.GetXrepresentors().ToArray(), _symbol.GetYrepresentros().ToArray());
 			int whichClass = NeuralNetwork.WhichClass(results) + 1;
 			labelClass.Text = whichClass.ToString();
 		}
 
 		private void ButtonTest_Click(object sender, EventArgs e)
 		{
+			Test.Enabled = false;
 			UiHandler.SetSlider(panelSlider, buttonTest.Top, buttonTest.Height);
 			UiHandler.PanelVisible(panelTest, _panels);
 		}
-
-		
 		// ______________________________________________________________
 	}
 }

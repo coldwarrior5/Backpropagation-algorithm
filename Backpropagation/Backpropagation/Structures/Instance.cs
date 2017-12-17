@@ -36,5 +36,21 @@ namespace Backpropagation.Structures
 			}
 			AddSymbol(xPositions, yPositions, classes);
 		}
+
+		protected bool Equals(Instance other)
+		{
+			return NumSymbols == other.NumSymbols && NumSamples == other.NumSamples && NumSymbolSamples == other.NumSymbolSamples;
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = NumSymbols;
+				hashCode = (hashCode * 397) ^ NumSamples;
+				hashCode = (hashCode * 397) ^ NumSymbolSamples;
+				return hashCode;
+			}
+		}
 	}
 }
