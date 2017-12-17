@@ -400,7 +400,7 @@ namespace Backpropagation
 		{
 			Train.Visible = false;
 			GoToTest.Visible = true;
-			_ann.Train();
+			_ann.Train(errorChart, labelTotalError, GoToTest);
 			NeuralNetwork.FillChart(errorChart, labelTotalError, _ann);
 		}
 
@@ -408,6 +408,7 @@ namespace Backpropagation
 		{
 			Train.Visible = true;
 			GoToTest.Visible = false;
+			GoToTest.Enabled = false;
 			_ann.FixArchitecture();
 			UiHandler.PanelVisible(panelTest, _panels);
 			buttonTest.Enabled = true;
@@ -418,6 +419,7 @@ namespace Backpropagation
 		{
 			_ann?.ResetNetwork();
 			_drawer?.ResetPoints();
+			_ann?.ResetTraining();
 			Train.Visible = true;
 			GoToTest.Visible = false;
 			UiHandler.SetSlider(panelSlider, buttonTrain.Top, buttonTrain.Height);

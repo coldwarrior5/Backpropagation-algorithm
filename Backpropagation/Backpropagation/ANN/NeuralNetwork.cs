@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,6 +9,7 @@ using Backpropagation.ANN.Interfaces;
 using Backpropagation.Handlers;
 using Backpropagation.Structures;
 using BackpropagationHandler = Backpropagation.Structures.Backpropagation;
+using ContentAlignment = System.Drawing.ContentAlignment;
 
 namespace Backpropagation.ANN
 {
@@ -25,23 +26,28 @@ namespace Backpropagation.ANN
 		private double[] _perSymbolError;
 		public double TotalError { get; private set; }
 		private Instance _instance;
+		private double[][] _yLayer;
+		private double[][] _deltaLayer;
 
-		public const double EtaMin = 0.001;
-		public const double EtaDefault = 0.01;
-		public const double EtaMax = 1;
+		public const double EtaMin = 0.01;
+		public const double EtaDefault = 0.1;
+		public const double EtaMax = 10;
 
 		public const double DesiredErrorMin = 0;
 		public const double DesiredErrorDefault = 0.01;
 		public const double DesiredErrorMax = 5;
 
-		public const int IterationLimit = 10000;
+		public const int IterationLimit = 5000;
 
 		public const int NeuronMin = 1;
 		private readonly int _neuronDefault;
+		private List<double> _changes;
 		public const int NeuronMax = 50;
 
 		public const int LayersMin = 3;
 		public const int LayersMax = 10;
+
+		public const double RefreshRate = 1; // Every quarter a second update the graph
 
 		public NeuralNetwork(Instance instance, IActivationFunction function = null, IActivationFunction outputLayerFunction = null)
 		{
@@ -65,9 +71,7 @@ namespace Backpropagation.ANN
 			_outputLayerFunction = outputLayerFunction;
 			_perSymbolError = new double[_instance.NumSymbols];
 
-			TotalError = 0;
-			for (int i = 0; i < _instance.NumSymbols; i++)
-				_perSymbolError[i] = 0;
+			ResetTraining();
 		}
 
 		public void AddLayer()
@@ -112,25 +116,40 @@ namespace Backpropagation.ANN
 		private void InitNetwork()
 		{
 			_layers = new List<NeuronLayer>();
-			
+			_yLayer = new double[NumberOfLayers][];
+			_deltaLayer = new double[NumberOfLayers][];
 			for (int i = 0; i < NumberOfLayers; i++)
 			{
 				int numberOfNeuronsInFormerLayer = i == 0 ? 0 : _architecture[i - 1];
 				IActivationFunction currentFunction = i == NumberOfLayers - 1 ? _outputLayerFunction : _function;
 				_layers.Add(new NeuronLayer(_architecture[i], numberOfNeuronsInFormerLayer, currentFunction));
+				_yLayer[i] = new double[_architecture[i]];
+				_deltaLayer[i] = new double[_architecture[i]];
 			}
 			Evaluate();
 		}
 
-		public void Train()
+		public void Train(Chart chart, Label totalError, Button testNetwork)
 		{
 			InitNetwork();
 			int iter = 0;
 			List<List<Symbol>> batches = FormBatches();
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
 			while (TotalError > _desiredError && iter++ < IterationLimit)
 			{
-				
+				Backpropagation(batches);
+				stopwatch.Stop();
+				if (stopwatch.Elapsed.TotalSeconds < RefreshRate)
+				{
+					stopwatch.Start();
+					continue;
+				}
+				Evaluate();
+				FillChart(chart, totalError, this);
+				stopwatch.Restart();
 			}
+			testNetwork.Enabled = true;
 		}
 
 		private List<List<Symbol>> FormBatches()
@@ -176,12 +195,81 @@ namespace Backpropagation.ANN
 			return batches;
 		}
 
+		private void Backpropagation(List<List<Symbol>> batches)
+		{
+			double delta = _eta / batches[0].Count;
+			// Go through every batch
+			for (int i = 0; i < batches.Count; i++)
+			{
+				InitChanges(out List<List<double>> changes);
+
+				// Go through every simbol in the batch
+				for (int j = 0; j < batches[i].Count; j++)
+				{
+					// Determine layer outputs
+					GetOutputs(batches[i][j].XPositions, batches[i][j].YPositions);
+					// Go through each layer and evaluate delta
+					for (int k = NumberOfLayers - 1; k > 0; k--)
+					{
+						bool outputLayer = k == NumberOfLayers - 1;
+						double[] input = _yLayer[k - 1];
+						double[] output = _yLayer[k];
+						double[] deltaOrDesired = outputLayer ? Array.ConvertAll(batches[i][j].Class, element => (double) element) : _deltaLayer[k + 1];
+						_changes = changes[k - 1];
+						_layers[k].Backpropagation(input, output, ref _deltaLayer[k], deltaOrDesired, ref _changes, outputLayer);
+					}
+
+				}
+
+				// Multiply each change with learning rate
+				for (int j = 0; j < changes.Count; j++)
+				{
+					for (int k = 0; k < changes[j].Count; k++)
+					{
+						changes[j][k] *= delta;
+					}
+				}
+
+				// Apply change after single batch
+				for (int j = 1; j < NumberOfLayers; j++)
+				{
+					_layers[j].ApplyChange(changes[j - 1]);
+				}
+			}
+		}
+
+		//TODO see about init weight
+		private void InitChanges(out List<List<double>> changes)
+		{
+			changes = new List<List<double>>();
+			// No changes for input layer
+			for (int i = 0; i < NumberOfLayers - 1; i++)
+			{
+				changes.Add(new List<double>());
+				for (int j = 0; j < _architecture[i] * _architecture[i + 1]; j++)
+				{
+					changes[i].Add(0);
+				}
+			}
+		}
+
 		public void ResetNetwork()
 		{
 			for (var i = 0; i < NumberOfLayers; i++)
 			{
 				_layers[i].ResetLayer();
 			}
+		}
+
+		public void ResetTraining()
+		{
+			TotalError = 0;
+			for (int i = 0; i < _instance.NumSymbols; i++)
+				_perSymbolError[i] = 0;
+
+			_layers = new List<NeuronLayer>();
+			_yLayer = new double[NumberOfLayers][];
+			_deltaLayer = new double[NumberOfLayers][];
 		}
 
 		public double[] GetOutputs(double[] xValues, double[] yValues)
@@ -198,9 +286,9 @@ namespace Backpropagation.ANN
 		private double[] GetOutputs(double[] inputs)
 		{
 			double[] tempInputs = inputs;
-			for (int i = 0; i < NumberOfLayers; i++)
+			for (var i = 0; i < NumberOfLayers; i++)
 			{
-				tempInputs = _layers[i].GetOutputs(tempInputs);
+				tempInputs = _yLayer[i] = _layers[i].GetOutputs(tempInputs);
 			}
 			return tempInputs;
 		}
@@ -279,7 +367,9 @@ namespace Backpropagation.ANN
 			{
 				graph.Series[name].Points.AddXY(i + 1, ann._perSymbolError[i]);
 			}
+			graph.Update();
 			totalError.Text = ann.TotalError.ToString(CultureInfo.InvariantCulture);
+			totalError.Update();
 		}
 
 		public static void FillPanel(TableLayoutPanel panel, NeuralNetwork ann)

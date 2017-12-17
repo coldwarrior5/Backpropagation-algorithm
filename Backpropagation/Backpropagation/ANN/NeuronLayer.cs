@@ -53,5 +53,21 @@ namespace Backpropagation.ANN
 			}
 			return outputs;
 		}
+
+		public void ApplyChange(List<double> doubles)
+		{
+			for (int i = 0; i < NumberOfNeurons; i++)
+			{
+				_neurons[i].ApplyChange(doubles.GetRange(i * InputSize, InputSize));
+			}
+		}
+		
+		internal void Backpropagation(double[] inputs, double[] outputs, ref double[] deltaLayer, double[] deltaOrDesired, ref List<double> changes, bool lastLayer)
+		{
+			for (int j = 0; j < NumberOfNeurons; j++)
+			{
+				deltaLayer[j] = _neurons[j].Backpropagation(inputs, outputs, deltaOrDesired, ref changes, j, lastLayer);
+			}
+		}
 	}
 }
