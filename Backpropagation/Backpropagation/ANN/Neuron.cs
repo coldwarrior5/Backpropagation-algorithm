@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Backpropagation.ANN.Interfaces;
 using Backpropagation.Handlers;
 
@@ -25,11 +26,20 @@ namespace Backpropagation.ANN
 			RandomWeights();
 		}
 
+		[SuppressMessage("ReSharper", "UnusedMember.Local")]
+		private void ZeroWeights()
+		{
+			for (var i = 0; i < InputSize + 1; i++)
+			{
+				_weights[i] = 0;
+			}
+		}
+
 		private void RandomWeights()
 		{
 			for (var i = 0; i < InputSize + 1; i++)
 			{
-				_weights[i] = MathHandler.Rand.NextDouble();
+				_weights[i] = MathHandler.Rand.NextDouble() - 0.5;
 			}
 		}
 
@@ -70,20 +80,33 @@ namespace Backpropagation.ANN
 			}
 		}
 
-		public double Backpropagation(double[] inputs, double[] outputs, double[] deltaOrDesired, ref List<double> changes, int j, bool lastLayer)
+		public double AskForWeight(int index)
 		{
-			double delta;
-			if (lastLayer)
-				delta = outputs[j] * (1 - outputs[j]) * (deltaOrDesired[j] - outputs[j]);
-			else
+			if (InputSize != 0 && index > InputSize)
+				throw new IndexOutOfRangeException("Weight index out of range.");
+			return _weights[index + 1];
+		}
+
+		public double Backpropagation(double[] inputs, double[] outputs, double[] desired, ref List<double> changes, int j)
+		{
+			double delta = outputs[j] * (1 - outputs[j]) * (desired[j] - outputs[j]);
+			
+			for (int i = 0; i < InputSize; i++)
 			{
-				double sum = 0;
-				for (int i = 0; i < deltaOrDesired.Length; i++)
-				{
-					sum += _weights[i + 1] * deltaOrDesired[i];
-				}
-				delta = outputs[j] * (1 - outputs[j]) * sum;
+				changes[j * InputSize + i] += delta * inputs[i];
 			}
+			return delta;
+		}
+
+
+		public double Backpropagation(double[] inputs, double[] outputs, double[] deltaNext, Neuron[] neurons, ref List<double> changes, int j)
+		{
+			double sum = 0;
+			for (int i = 0; i < deltaNext.Length; i++)
+			{
+				sum += neurons[i].AskForWeight(j) * deltaNext[i];
+			}
+			var delta = outputs[j] * (1 - outputs[j]) * sum;
 			for (int i = 0; i < InputSize; i++)
 			{
 				changes[j * InputSize + i] += delta * inputs[i];

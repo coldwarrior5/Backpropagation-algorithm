@@ -230,9 +230,16 @@ namespace Backpropagation
 
 		private void ButtonSetSample_Click(object sender, EventArgs e)
 		{
-			UiHandler.DecrementValue(tableClasses, _whichClass);
+			try
+			{
+				_instance.AddSymbol(_symbol.GetXrepresentors(), _symbol.GetYrepresentros(), _whichClass, _params.Symbols);
+				UiHandler.DecrementValue(tableClasses, _whichClass);
+			}
+			catch (Exception)
+			{
+				// ignored
+			}
 			buttonSetSample.Enabled = false;
-			_instance.AddSymbol(_symbol.GetXrepresentors(), _symbol.GetYrepresentros(), _whichClass, _params.Symbols);
 			_drawer.ResetPoints();
 			if (UiHandler.AllButtonsDisabled(tableClasses))
 				SaveTestSet.Enabled = true;
@@ -446,8 +453,16 @@ namespace Backpropagation
 		private void Test_Click(object sender, EventArgs e)
 		{
 			double[] results = _ann.GetOutputs(_symbol.GetXrepresentors().ToArray(), _symbol.GetYrepresentros().ToArray());
-			int whichClass = NeuralNetwork.WhichClass(results) + 1;
-			labelClass.Text = whichClass.ToString();
+			if (results is null)
+			{
+				labelClass.Text = @"The character is too short.";
+			}
+			else
+			{
+				NeuralNetwork.SetClasses(resultClasses, results);
+				int whichClass = NeuralNetwork.WhichClass(results) + 1;
+				labelClass.Text = whichClass.ToString();
+			}
 		}
 
 		private void ButtonTest_Click(object sender, EventArgs e)

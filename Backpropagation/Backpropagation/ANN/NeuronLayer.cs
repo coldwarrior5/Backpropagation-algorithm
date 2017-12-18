@@ -8,7 +8,7 @@ namespace Backpropagation.ANN
 	{
 		public int NumberOfNeurons { get; }
 		public int InputSize { get; }
-		private List<INeuron> _neurons;
+		private Neuron[] _neurons;
 
 		public NeuronLayer(int numberOfNeurons, int numberOfNeuronsInPreviousLayer, IActivationFunction function = null)
 		{
@@ -19,10 +19,10 @@ namespace Backpropagation.ANN
 
 		private void InitNeurons(IActivationFunction function)
 		{
-			_neurons = new List<INeuron>();
+			_neurons = new Neuron[NumberOfNeurons];
 			DetermineRightFunction(ref function);
 			for (int i = 0; i < NumberOfNeurons; i++)
-				_neurons.Add(new Neuron(InputSize, function));
+				_neurons[i] = new Neuron(InputSize, function);
 		}
 
 		public void ResetLayer()
@@ -61,12 +61,27 @@ namespace Backpropagation.ANN
 				_neurons[i].ApplyChange(doubles.GetRange(i * InputSize, InputSize));
 			}
 		}
+
+		public Neuron[] GetNeurons()
+		{
+			return _neurons;
+		}
 		
-		internal void Backpropagation(double[] inputs, double[] outputs, ref double[] deltaLayer, double[] deltaOrDesired, ref List<double> changes, bool lastLayer)
+		// This is for last layer
+		internal void Backpropagation(double[] inputs, double[] outputs, ref double[] deltaLayer, double[] desired, ref List<double> changes)
 		{
 			for (int j = 0; j < NumberOfNeurons; j++)
 			{
-				deltaLayer[j] = _neurons[j].Backpropagation(inputs, outputs, deltaOrDesired, ref changes, j, lastLayer);
+				deltaLayer[j] = _neurons[j].Backpropagation(inputs, outputs, desired, ref changes, j);
+			}
+		}
+
+		// This is for hidden layer
+		internal void Backpropagation(double[] inputs, double[] outputs, ref double[] deltaLayer, double[] deltaNext, Neuron[] neurons, ref List<double> changes)
+		{
+			for (int j = 0; j < NumberOfNeurons; j++)
+			{
+				deltaLayer[j] = _neurons[j].Backpropagation(inputs, outputs, deltaNext, neurons, ref changes, j);
 			}
 		}
 	}

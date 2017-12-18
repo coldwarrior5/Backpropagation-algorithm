@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+
 // ReSharper disable SuggestBaseTypeForParameter
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable SuggestVarOrType_BuiltInTypes
@@ -14,18 +16,17 @@ namespace Backpropagation.ANN
 
 			double[] perSymbolError = new double[givenOutputs[0].Length];
 
-			for (int i = 0; i < givenOutputs.Length; i++)
-			{
-				int index = WhichClass(expectedOutputs[i]);
-				perSymbolError[index] += EvaluateSingleSample(givenOutputs[i], expectedOutputs[i]);
-			}
 			for (int i = 0; i < givenOutputs[0].Length; i++)
 			{
-				perSymbolError[i] /= 2 * givenOutputs.Length;
+				for (int j = 0; j < givenOutputs.Length; j++)
+				{
+					perSymbolError[i] += Math.Pow(expectedOutputs[j][i] - givenOutputs[j][i], 2) / (2 * givenOutputs.Length);
+				}
 			}
 			return perSymbolError;
 		}
 
+		[SuppressMessage("ReSharper", "UnusedMember.Global")]
 		public static double Evaluate(double[][] givenOutputs, int[][] expectedOutputs)
 		{
 			if (givenOutputs.Length != expectedOutputs.Length)
@@ -50,17 +51,6 @@ namespace Backpropagation.ANN
 				sum += Math.Pow(expectedOutputs[i] - givenOutputs[i], 2);
 			}
 			return sum;
-		}
-
-		private static int WhichClass(int[] classes)
-		{
-			int which = 0;
-			for (int i = 0; i < classes.Length; i++)
-			{
-				if (classes[i] == 1)
-					which = i;
-			}
-			return which;
 		}
 	}
 }

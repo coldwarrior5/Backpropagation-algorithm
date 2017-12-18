@@ -86,6 +86,7 @@ namespace Backpropagation
 			this.labelClassStatic = new System.Windows.Forms.Label();
 			this.drawingBoardTest = new System.Windows.Forms.PictureBox();
 			this.Test = new System.Windows.Forms.Button();
+			this.resultClasses = new System.Windows.Forms.TableLayoutPanel();
 			this.progressionPanel.SuspendLayout();
 			this.titleBar.SuspendLayout();
 			this.panelTestSet.SuspendLayout();
@@ -647,6 +648,7 @@ namespace Backpropagation
 			// 
 			// panelTest
 			// 
+			this.panelTest.Controls.Add(this.resultClasses);
 			this.panelTest.Controls.Add(this.labelClass);
 			this.panelTest.Controls.Add(this.labelClassStatic);
 			this.panelTest.Controls.Add(this.drawingBoardTest);
@@ -678,7 +680,7 @@ namespace Backpropagation
 			// drawingBoardTest
 			// 
 			this.drawingBoardTest.Image = global::Backpropagation.Properties.Resources.Board;
-			this.drawingBoardTest.Location = new System.Drawing.Point(125, 90);
+			this.drawingBoardTest.Location = new System.Drawing.Point(125, 0);
 			this.drawingBoardTest.Name = "drawingBoardTest";
 			this.drawingBoardTest.Size = new System.Drawing.Size(400, 250);
 			this.drawingBoardTest.TabIndex = 3;
@@ -699,14 +701,27 @@ namespace Backpropagation
 			this.Test.UseVisualStyleBackColor = true;
 			this.Test.Click += new System.EventHandler(this.Test_Click);
 			// 
+			// resultClasses
+			// 
+			this.resultClasses.ColumnCount = 2;
+			this.resultClasses.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.resultClasses.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.resultClasses.Location = new System.Drawing.Point(125, 266);
+			this.resultClasses.Name = "resultClasses";
+			this.resultClasses.RowCount = 2;
+			this.resultClasses.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.resultClasses.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.resultClasses.Size = new System.Drawing.Size(400, 67);
+			this.resultClasses.TabIndex = 6;
+			// 
 			// Main
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(44)))), ((int)(((byte)(51)))));
 			this.ClientSize = new System.Drawing.Size(800, 600);
-			this.Controls.Add(this.panelTrain);
 			this.Controls.Add(this.panelParam);
 			this.Controls.Add(this.panelTestSet);
+			this.Controls.Add(this.panelTrain);
 			this.Controls.Add(this.panelTest);
 			this.Controls.Add(this.panelSlider);
 			this.Controls.Add(this.titleBar);
@@ -790,6 +805,7 @@ namespace Backpropagation
 		private Button buttonRemoveLayer;
 		private Label labelTotalError;
 		private Label labelTotalErrorStatic;
+		private TableLayoutPanel resultClasses;
 	}
 }
 

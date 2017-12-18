@@ -152,7 +152,7 @@ namespace Backpropagation.Handlers
 		{
 			if (line != null)
 			{
-				var matches = Regex.Matches(line, "[0-9.]+");
+				var matches = Regex.Matches(line, "[-0-9.]+");
 				var instances = matches.GetEnumerator();
 				while (instances.MoveNext())
 				{

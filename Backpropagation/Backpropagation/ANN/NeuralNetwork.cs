@@ -29,25 +29,26 @@ namespace Backpropagation.ANN
 		private double[][] _yLayer;
 		private double[][] _deltaLayer;
 
-		public const double EtaMin = 0.01;
+
+		public const double EtaMin = 0.0001;
 		public const double EtaDefault = 0.1;
-		public const double EtaMax = 10;
+		public const double EtaMax = 1;
 
 		public const double DesiredErrorMin = 0;
-		public const double DesiredErrorDefault = 0.01;
+		public const double DesiredErrorDefault = 0.0001;
 		public const double DesiredErrorMax = 5;
 
-		public const int IterationLimit = 5000;
+		public const int IterationLimit = 10000;
 
 		public const int NeuronMin = 1;
 		private readonly int _neuronDefault;
 		private List<double> _changes;
-		public const int NeuronMax = 50;
+		public const int NeuronMax = 200;
 
 		public const int LayersMin = 3;
 		public const int LayersMax = 10;
 
-		public const double RefreshRate = 1; // Every quarter a second update the graph
+		public const double RefreshRate = 0.25; // Every quarter a second update the graph
 
 		public NeuralNetwork(Instance instance, IActivationFunction function = null, IActivationFunction outputLayerFunction = null)
 		{
@@ -197,12 +198,10 @@ namespace Backpropagation.ANN
 
 		private void Backpropagation(List<List<Symbol>> batches)
 		{
-			double delta = _eta / batches[0].Count;
+			InitChanges(out List<List<double>> changes);
 			// Go through every batch
 			for (int i = 0; i < batches.Count; i++)
 			{
-				InitChanges(out List<List<double>> changes);
-
 				// Go through every simbol in the batch
 				for (int j = 0; j < batches[i].Count; j++)
 				{
@@ -214,11 +213,17 @@ namespace Backpropagation.ANN
 						bool outputLayer = k == NumberOfLayers - 1;
 						double[] input = _yLayer[k - 1];
 						double[] output = _yLayer[k];
-						double[] deltaOrDesired = outputLayer ? Array.ConvertAll(batches[i][j].Class, element => (double) element) : _deltaLayer[k + 1];
+						double[] deltaOrDesired = outputLayer ? Array.ConvertAll(batches[i][j].Class, element => (double)element) : _deltaLayer[k + 1];
 						_changes = changes[k - 1];
-						_layers[k].Backpropagation(input, output, ref _deltaLayer[k], deltaOrDesired, ref _changes, outputLayer);
+						if (outputLayer)
+						{
+							_layers[k].Backpropagation(input, output, ref _deltaLayer[k], deltaOrDesired, ref _changes);
+						}
+						else
+						{
+							_layers[k].Backpropagation(input, output, ref _deltaLayer[k], deltaOrDesired, _layers[k + 1].GetNeurons() , ref _changes);
+						}
 					}
-
 				}
 
 				// Multiply each change with learning rate
@@ -226,7 +231,7 @@ namespace Backpropagation.ANN
 				{
 					for (int k = 0; k < changes[j].Count; k++)
 					{
-						changes[j][k] *= delta;
+						changes[j][k] *= _eta;
 					}
 				}
 
@@ -235,6 +240,7 @@ namespace Backpropagation.ANN
 				{
 					_layers[j].ApplyChange(changes[j - 1]);
 				}
+				ResetChanges(ref changes);
 			}
 		}
 
@@ -249,6 +255,17 @@ namespace Backpropagation.ANN
 				for (int j = 0; j < _architecture[i] * _architecture[i + 1]; j++)
 				{
 					changes[i].Add(0);
+				}
+			}
+		}
+
+		private void ResetChanges(ref List<List<double>> changes)
+		{
+			for (int i = 0; i < changes.Count; i++)
+			{
+				for (int j = 0; j < changes[i].Count; j++)
+				{
+					changes[i][j] = 0;
 				}
 			}
 		}
@@ -288,7 +305,15 @@ namespace Backpropagation.ANN
 			double[] tempInputs = inputs;
 			for (var i = 0; i < NumberOfLayers; i++)
 			{
-				tempInputs = _yLayer[i] = _layers[i].GetOutputs(tempInputs);
+				try
+				{
+					tempInputs = _yLayer[i] = _layers[i].GetOutputs(tempInputs);
+				}
+				catch(Exception)
+				{
+					return null;
+				}
+				
 			}
 			return tempInputs;
 		}
@@ -308,7 +333,6 @@ namespace Backpropagation.ANN
 			{
 				givenOutputs[i] = GetOutputs(_instance.Symbols[i].XPositions, _instance.Symbols[i].YPositions);
 				expectedOutputs[i] = _instance.Symbols[i].Class;
-
 			}
 
 			_perSymbolError = CriterionFunction.EvaluatePerSymbol(givenOutputs, expectedOutputs);
@@ -361,7 +385,7 @@ namespace Backpropagation.ANN
 		{
 			string name = "SymbolError";
 			graph.Series[name].Points.Clear();
-			graph.ChartAreas[0].AxisY.Maximum = 1;
+			graph.ChartAreas[0].AxisY.Maximum = Math.Abs(ann.TotalError) < double.Epsilon ? 1 : ann.TotalError;
 
 			for (int i = 0; i < ann._instance.NumSymbols; i++)
 			{
@@ -444,6 +468,42 @@ namespace Backpropagation.ANN
 				whichClass = i;
 			}
 			return whichClass;
+		}
+
+		public static void SetClasses(TableLayoutPanel panel, double[] results)
+		{
+			int columnCount = results.Length > 4 ? 5 : results.Length;
+			int rowCount = (results.Length - 1) / 5 + 1;
+
+			panel.ColumnCount = columnCount;
+			panel.RowCount = rowCount;
+
+			panel.ColumnStyles.Clear();
+			panel.RowStyles.Clear();
+			panel.Controls.Clear();
+
+			for (var i = 0; i < columnCount; i++)
+			{
+				panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columnCount));
+			}
+			for (var i = 0; i < rowCount; i++)
+			{
+				panel.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rowCount));
+			}
+
+			for (var i = 0; i < results.Length; i++)
+			{
+				var label = new Label
+				{
+					Text = @"Class " + (i + 1) + @": " + results[i].ToString("0.0000"),
+					Name = $"c_{i + 1}",
+					AutoSize = false,
+					TextAlign = ContentAlignment.MiddleCenter,
+					Dock = DockStyle.Fill
+				};
+				
+				panel.Controls.Add(label);
+			}
 		}
 
 		public static int WhichClass(int[] classes)

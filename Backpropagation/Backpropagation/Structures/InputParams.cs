@@ -63,6 +63,7 @@ namespace Backpropagation.Structures
 
 		private static void FillComboBox(ComboBox comboBox, int minValue, int maxValue, int delta = 1)
 		{
+			comboBox.Items.Clear();
 			if(comboBox.Items.Count != 0)
 				comboBox.Items.Clear();
 			for (int i = minValue; i <= maxValue; i += delta)
@@ -75,6 +76,7 @@ namespace Backpropagation.Structures
 		{
 			FileHandler fileHandler = new FileHandler();
 			List<string> files = fileHandler.FileList();
+			comboBox.Items.Clear();
 			foreach (string file in files)
 			{
 				comboBox.Items.Add(file);
